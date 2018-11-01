@@ -62,18 +62,37 @@ void zmain(void)
             //0.5s ON, 0,5 s OFF, 0,5 ON, 0,5 s OFF, 0.5 s ON, 0.5 s OFF, 1.5 ON, 0.5 s OFF, 1.5 s ON
             
             BatteryLed_Write(led);
+    
             
-            Beep(50);         //0.5s on
-            vTaskDelay(50);   //0.5s off
-            Beep(50);         //0.5s on
+            // S = dot / dot / dot
+
+            Beep(50);         
+            vTaskDelay(50);   
+            Beep(50);         
+            vTaskDelay(50);
+            Beep(50);
             
-            vTaskDelay(50);   //0.5s off
-            Beep(50);         //0.5s on
-            vTaskDelay(50);   //0.5s off
+            //The length of dash is three times the lengt of a dot.
+            
+            //between letter and letter, one dot time as gap
+            Beep(50);
+            
+            // o = dash / dash / dash
+            Beep(150);
+            vTaskDelay(50);   
+            Beep(150);       
+            vTaskDelay(50); 
+            Beep(150);       
+            
+            //here, one dot time as gap
+            
+            // S = dot / dot / dot
               
-            Beep(150);        //1.5 ON
-            vTaskDelay(50);   //0.5 s OFF
-            Beep(150);        //1.5 s ON
+            Beep(50);        
+            vTaskDelay(50);   
+            Beep(50); 
+            vTaskDelay(50);
+            Beep(50); 
             
              
         }
@@ -84,17 +103,3 @@ void zmain(void)
                
     }
  }  
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
