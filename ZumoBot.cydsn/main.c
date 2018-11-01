@@ -160,7 +160,7 @@ void zmain(void)
 {
     ADC_Battery_Start();        
 	int16 adcresult =0, value=0, state=0;
-    float  value_scaled= 0.0, value_scaled_compensated=0.0;
+    float  value_scaled= 0.0, volt=0.0;
 
     printf("\nBoot\n");
     uint8 button;
@@ -177,17 +177,46 @@ void zmain(void)
     {
         char msg[80];
         ADC_Battery_StartConvert(); // start sampling
-        if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) {   // wait for ADC converted value
+        if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
+        {   // wait for ADC converted value
             value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
             value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
-			value_scaled_compensated =  value_scaled * 3 /2; // you need to implement the conversion
+			volt =  value_scaled * 3 /2; // you need to implement the conversion
                     
             // Print both ADC results and converted value
-            printf("%.2f\n" ,value_scaled_compensated );
-        
-    while(1){
+            printf("%.2f\n" ,value_scaled_compensated ); 
+        }
+        if(volt > 4)
+        	status = 0;
+        else
+        	status = 1;
+        while(1){
+        	case 0:
+        	{
+        		BatteryLed_Write(0);
+        		break;
+        	}
+        	case 1:
+        	{
+        		BatteryLed_Write(1);
+        			if (volt > 4 && button(0))
+        				BatteryLed_Write(0);
+        				break;
+        			else 
+        				BatteryLed_Write(0)
+
+        	}
+    vTaskDelay(500);
+    }
+ }   
+#endif
+    
+
+
+
+    /* while(1){
     button = SW1_Read();
-   /* if (value_scaled_compensated >= 4)
+   	if (value_scaled_compensated >= 4)
     {
     state = 0;
     }
@@ -195,7 +224,6 @@ void zmain(void)
     {
     state = 1;
     }
-    */    
 	switch (state)
 	{	
 		case 0:
@@ -227,7 +255,7 @@ void zmain(void)
     vTaskDelay(500);
     }
  }   
-#endif
+#endif */
 
 #if 0
 // button
