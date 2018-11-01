@@ -72,7 +72,7 @@ void zmain(void)
 {
    // char name[32];
     int age, execution_time;
-    TickType_t( int first_time, int last_time);
+    TickType_t first_time, last_time, execution_time;
 	 
     
     printf("\n\n");
@@ -83,54 +83,66 @@ void zmain(void)
    
     printf("Enter your age: ");
     //fflush(stdout);
-	   first_time=xTaskGetTickCount( );
+	first_time=xTaskGetTickCount( );
 	
     scanf("%d", &age);
-		last_time=xTaskGetTickCount( );
+	last_time=xTaskGetTickCount( );
 		
-		 TickType_t(int first_time, int last_time)	
-              execution_time=last_time - first_time;
+	execution_time=last_time - first_time;
 			  
-		  if ( (0<=age) && (age<=21))
-		  {
-			  if (execution_time <= 3)
-		         printf("Super fast dude!");
+	if ( (0<=age) && (age<=21))
+	{
+		if (execution_time <= 3000)
+		{
+			printf("Super fast dude!");
+		}
 			 
-			else if (execution_time > 3 && execution_time <=5 )
-				 printf("So mediocre");
+		else if (execution_time > 3000 && execution_time <= 5000 )
+		{
+			printf("So mediocre");
+		}
 			 
-			 else (execution_time > 5)
-				 printf("My granny is faster than you!");
-		  }
+		else (execution_time > 5000)
+		{
+			printf("My granny is faster than you!");
+		}
+	}
 	 
-         else if ( (22 <= age) && (age <= 50))
+    else if ( (22 <= age) && (age <= 50))
 		 {
-			 if (execution_time <= 3)
-		        printf("Be quick or be dead");
+		if (execution_time <= 3000)
+		{
+			printf("Be quick or be dead");
+		}
 			 
-			else if (execution_time > 3 && execution_time <= 5)
-				 printf("You’re so average.");
+		else if (execution_time > 3000 && execution_time <= 5000)
+		{
+			printf("You’re so average.");
+		}
 			 
-			 else (execution_time > 5)
-				 printf("Have you been smoking something illegal?");
+		else (execution_time > 5000)
+		{
+			printf("Have you been smoking something illegal?");
 		  }
    
 	     else if ( ( 50<= age) )
 			 
 		 {
-			 if (execution_time <= 3)
+			 if (execution_time <= 3000)
+			 {
 		        printf("Still going strong");
+			 }
 			 
-			else if (execution_time > 3 && execution_time <=5 )
+			else if (execution_time > 3000 && execution_time <=5000 )
+			{
 				 printf("You are doing ok for your age.");
+			}
 			 
-			 else (execution_time >5 )
+			 else (execution_time >5000 )
+			 {
 				 printf("Do they still allow you to drive?");
+			 }
 		 }
-		 
-				   
-         return 0;
-       
 	 }
     //printf("You are [%s], age = %d\n", name, age);
 
