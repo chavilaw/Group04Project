@@ -84,7 +84,7 @@ void O()
               
             
             if
-            { (SW1_Read() == 0)  // wait while button is being pressed
+            { (SW1_Read(led) == 0)  // wait while button is being pressed
                 S & O & S();
              
              }
