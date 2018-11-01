@@ -54,7 +54,7 @@ void zmain(void)
             led = !led;
             BatteryLed_Write(led);
             
-            if(led) Beep(50);;
+            if(led) Beep(50);; \\check if the function should be true
             else vTaskDelay(50);
             
             while(SW1_Read() == 0)  // wait while button is being pressed
@@ -65,13 +65,18 @@ void zmain(void)
     
             
             // S = dot / dot / dot
-
+void S()
+{
             Beep(50);         
             vTaskDelay(50);   
             Beep(50);         
             vTaskDelay(50);
             Beep(50);
             vTaskDelay(100);
+}
+            if
+            {
+                S();
             
             //The length of dash is three times the lengt of a dot.
             
