@@ -53,7 +53,7 @@ void zmain(void)
             
       
             
-void S()
+void blink_S()
 {
             BatteryLed_Write(50);        // S = dot / dot / dot
             vTaskDelay(50);   
@@ -68,7 +68,7 @@ void S()
             BatteryLed_Write(50);
 }
             
-void O()
+void blink_O()
 {
             vTaskDelay(100);             // o = dash / dash / dash
             BatteryLed_Write(150);
@@ -85,6 +85,8 @@ void O()
             
             if
             { (SW1_Read(led) == 0)  // wait while button is being pressed
-                S & O & S();
+                blink_S();
+                blink_O();
+                blink_S();
              
              }
