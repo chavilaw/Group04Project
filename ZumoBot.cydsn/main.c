@@ -159,34 +159,12 @@ void zmain(void)
 void zmain(void)
 {
     ADC_Battery_Start();        
-	int16 adcresult =0, state=0;
+	int16 adcresult =0, value=0, state=0;
     float  value_scaled= 0.0, value_scaled_compensated=0.0;
 
     printf("\nBoot\n");
     uint8 button;
-    button = SW1_Read()
-	switch (value_scaled_compensated)
-	{	
-		case (value_scaled_compensated >= 4)
-			{
-			BatteryLed_Write(0);
-			}
-		case (value_scaled_compensated < 4)
-			{
-			if(!(value_scaled_compensated < 4 && button == 1))
-				{
-				BatteryLed_Write(1);
-				}
-			else 
-				{
-					BatteryLed_Write(0);
-				}
-			}
-	}	
-
-
-
-
+    
     //BatteryLed_Write(1); // Switch led on 
     //BatteryLed_Write(0); // Switch led off 
     //uint8 button;
@@ -206,8 +184,47 @@ void zmain(void)
                     
             // Print both ADC results and converted value
             printf("%.2f\n" ,value_scaled_compensated );
+        
+    while(1){
+    button = SW1_Read();
+   /* if (value_scaled_compensated >= 4)
+    {
+    state = 0;
+    }
+    else 
+    {
+    state = 1;
+    }
+    */    
+	switch (state)
+	{	
+		case 0:
+			{
+			BatteryLed_Write(0);
+            if(value_scaled_compensated > 4)
+                state= 0;
+            else 
+                state=1;
+			break;
+            }
+		case 1:
+			{
+                
+                BatteryLed_Write(1);
+			if(value_scaled_compensated > 4 && button == 0)
+				{
+				    state=0;
+				}
+			else 
+				{
+					state=1;
+                    				}
+            break;
+			}
         }
-        vTaskDelay(500);
+	}	
+        }
+    vTaskDelay(500);
     }
  }   
 #endif
