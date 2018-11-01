@@ -204,6 +204,7 @@ void zmain(void)
         				break;
         			else 
         				BatteryLed_Write(0)
+        				break;
 
         	}
     vTaskDelay(500);
