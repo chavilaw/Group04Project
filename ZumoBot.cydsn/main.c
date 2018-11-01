@@ -94,7 +94,7 @@ void zmain(void)
 #endif
 
 
-#if 1
+#if 0
 //battery level//
 void zmain(void)
 {
@@ -103,15 +103,22 @@ void zmain(void)
     float  value_scaled= 0.0, value_scaled_compesated=0.0;
 
     printf("\nBoot\n");
-	// if value_scaled_compensated < 4
-		//BatteryLed_Write(1);
-	//else 
-		//BatteryLed_Write(0);
+	
+	if value_scaled_compensated < 4
+		BatteryLed_Write(1);
+
+	else 
+		BatteryLed_Write(0);
     //BatteryLed_Write(1); // Switch led on 
-    BatteryLed_Write(0); // Switch led off 
+    //BatteryLed_Write(0); // Switch led off 
     
-    //uint8 button;
-    //button = SW1_Read(); // read SW1 on pSoC board
+    uint8 button;
+    button = SW1_Read(); // read SW1 on pSoC board
+    // if button == 0 && value_scaled_compensated > 0
+    	//BatteryLed_Write(0);
+    //else 
+    	//BatteryLed_Write(1);
+
     // SW1_Read() returns zero when button is pressed
     // SW1_Read() returns one when button is not pressed
 
