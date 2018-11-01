@@ -71,6 +71,7 @@ void zmain(void)
             Beep(50);         
             vTaskDelay(50);
             Beep(50);
+            vTaskDelay(100);
             
             //The length of dash is three times the lengt of a dot.
             
@@ -78,16 +79,19 @@ void zmain(void)
             Beep(50);
             
             // o = dash / dash / dash
+            vTaskDelay(100);
             Beep(150);
             vTaskDelay(50);   
             Beep(150);       
             vTaskDelay(50); 
-            Beep(150);       
+            Beep(150);   
+            vTaskDelay(100);
             
             //here, one dot time as gap
+            Beep(50);
             
             // S = dot / dot / dot
-              
+            vTaskDelay(100);  
             Beep(50);        
             vTaskDelay(50);   
             Beep(50); 
