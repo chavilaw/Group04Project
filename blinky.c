@@ -2,6 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+
 
 void blink(int frequency){
 
@@ -20,17 +24,7 @@ OFF, 1.5 s ON, …
 After the sequence the program goes back to wait for another button press to start S-O-S again.
 
  */
- 
 
-#define F_CPU 16000000
-
-#include <avr/io.h>
-#include <util/delay.h>
-
- 
-   // "..."=s;
-   // "---"=o;
-    
     
 void zmain(void)
 {
@@ -49,66 +43,50 @@ void zmain(void)
     for(;;)
     {
         // toggle led state when button is pressed
-        if(SW1_Read() == 0) {
+        
+        if(SW1_Read() == 0) {    // == 0, means its already paused
             
             led = !led;
-            BatteryLed_Write(led);
-            
-            if(led) Beep(50);; \\check if the function should be true
-            else vTaskDelay(50);
-            
-            while(SW1_Read() == 0)  // wait while button is being pressed
-
-            //0.5s ON, 0,5 s OFF, 0,5 ON, 0,5 s OFF, 0.5 s ON, 0.5 s OFF, 1.5 ON, 0.5 s OFF, 1.5 s ON
-            
-            BatteryLed_Write(led);
-    
-            
-            // S = dot / dot / dot
-void S()
-{
-            Beep(50);         
-            vTaskDelay(50);   
-            Beep(50);         
-            vTaskDelay(50);
-            Beep(50);
-            vTaskDelay(100);
+            if(led == true ) ;
+            BatteryLed_Write(led);    //check if the function should be true
 }
-            if
-            {
-                S();
             
+      
+            
+void blink_S()
+{
+            BatteryLed_Write(50);        // S = dot / dot / dot
+            vTaskDelay(50);   
+            BatteryLed_Write(50)        
+            vTaskDelay(50);
+            BatteryLed_Write(50);
+            vTaskDelay(100);
+    
             //The length of dash is three times the lengt of a dot.
             
             //between letter and letter, one dot time as gap
-            Beep(50);
+            BatteryLed_Write(50);
+}
             
-            // o = dash / dash / dash
-            vTaskDelay(100);
-            Beep(150);
+void blink_O()
+{
+            vTaskDelay(100);             // o = dash / dash / dash
+            BatteryLed_Write(150);
             vTaskDelay(50);   
-            Beep(150);       
+            BatteryLed_Write(150);       
             vTaskDelay(50); 
-            Beep(150);   
+            BatteryLed_Write(150);   
             vTaskDelay(100);
-            
-            //here, one dot time as gap
-            Beep(50);
-            
-            // S = dot / dot / dot
-            vTaskDelay(100);  
-            Beep(50);        
-            vTaskDelay(50);   
-            Beep(50); 
-            vTaskDelay(50);
-            Beep(50); 
-            
-             
-        }
     
-        
-    return 0;
-
-               
-    }
- }  
+            //here, one dot time as gap
+            BatteryLed_Write(50);
+}
+              
+            
+            if
+            { (SW1_Read(led) == 0)  // wait while button is being pressed
+                blink_S();
+                blink_O();
+                blink_S();
+             
+             }

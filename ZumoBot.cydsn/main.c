@@ -238,7 +238,35 @@ void zmain(void)
 #endif
 
 #if 0
-// button
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#define F_CPU 16000000
+#include <avr/io.h>
+#include <util/delay.h>
+
+
+void blink(int frequency){
+
+    
+/*
+  Blink
+  Turns on an LED on for one second, then off for one second, repeatedly.
+ 
+  This example code is in the public domain.
+  
+  Write a program that blinks S-O-S morse code when uses presses the button. The code is: dot, dot,
+dot, dash, dash, dash, dot, dot, dot, (long pause if code repeats). The length of dash is three times
+the lengt of a dot. The off time between dots and dashes is one dot long. For example, if dot lenght
+is 0.5 seconds the sequence is 0.5s ON, 0,5 s OFF, 0,5 ON, 0,5 s OFF, 0.5 s ON, 0.5 s OFF, 1.5 ON, 0.5 s
+OFF, 1.5 s ON, …
+After the sequence the program goes back to wait for another button press to start S-O-S again.
+
+ */
+
+    
 void zmain(void)
 {
     printf("\nBoot\n");
@@ -256,16 +284,54 @@ void zmain(void)
     for(;;)
     {
         // toggle led state when button is pressed
-        if(SW1_Read() == 0) {
+        
+        if(SW1_Read() == 0) {    // == 0, means its already paused
+            
             led = !led;
-            BatteryLed_Write(led);
-            if(led) printf("Led is ON\n");
-            else printf("Led is OFF\n");
-            Beep(1000, 150);
-            while(SW1_Read() == 0) vTaskDelay(10); // wait while button is being pressed
-        }        
-    }
- }   
+            if(led == true ) ;
+            BatteryLed_Write(led);    //check if the function should be true
+}
+            
+      
+            
+void blink_S()
+{
+            BatteryLed_Write(50);        // S = dot / dot / dot
+            vTaskDelay(50);   
+            BatteryLed_Write(50)        
+            vTaskDelay(50);
+            BatteryLed_Write(50);
+            vTaskDelay(100);
+    
+            //The length of dash is three times the lengt of a dot.
+            
+            //between letter and letter, one dot time as gap
+            BatteryLed_Write(50);
+}
+            
+void blink_O()
+{
+            vTaskDelay(100);             // o = dash / dash / dash
+            BatteryLed_Write(150);
+            vTaskDelay(50);   
+            BatteryLed_Write(150);       
+            vTaskDelay(50); 
+            BatteryLed_Write(150);   
+            vTaskDelay(100);
+    
+            //here, one dot time as gap
+            BatteryLed_Write(50);
+}
+              
+            
+            if
+            { (SW1_Read(led) == 0)  // wait while button is being pressed
+                blink_S();
+                blink_O();
+                blink_S();
+             
+             }
+
 #endif
 
 
