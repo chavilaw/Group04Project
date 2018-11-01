@@ -94,19 +94,22 @@ void zmain(void)
 #endif
 
 
-#if 0
+#if 1
 //battery level//
 void zmain(void)
 {
     ADC_Battery_Start();        
-
-    int16 adcresult =0;
-    float volts = 0.0;
+	int16 adcresult =0;
+    float  value_scaled= 0.0, value_scaled_compesated=0.0;
 
     printf("\nBoot\n");
-
+	// if value_scaled_compensated < 4
+		//BatteryLed_Write(1);
+	//else 
+		//BatteryLed_Write(0);
     //BatteryLed_Write(1); // Switch led on 
     BatteryLed_Write(0); // Switch led off 
+    
     //uint8 button;
     //button = SW1_Read(); // read SW1 on pSoC board
     // SW1_Read() returns zero when button is pressed
@@ -117,12 +120,12 @@ void zmain(void)
         char msg[80];
         ADC_Battery_StartConvert(); // start sampling
         if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) {   // wait for ADC converted value
-            adcresult = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
-            // convert value to Volts
-            // you need to implement the conversion
-            
+            value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
+            value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
+			value_scaled_compensated =  value_scaled * 3 /2; // you need to implement the conversion
+                    
             // Print both ADC results and converted value
-            printf("%d %f\r\n",adcresult, volts);
+            printf("%.2f\n" ,value_scaled_compensated );
         }
         vTaskDelay(500);
     }
@@ -293,14 +296,14 @@ void zmain(void)
 
     vTaskDelay(3000);
     
-    motor_forward(100,2000);     // moving forward
+    motor_forward(100,2000);     // moving forward, milisecond delay how long motor is on
     motor_turn(200,50,2000);     // turn
     motor_turn(50,200,2000);     // turn
     motor_backward(100,2000);    // moving backward
      
-    motor_forward(0,0);         // stop motors
+    motor_forward(0,0);         // stop motors 
 
-    motor_stop();               // disable motor controller
+    motor_stop();               // disable motor controller, full stop need start again to go
     
     for(;;)
     {
