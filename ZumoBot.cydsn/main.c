@@ -203,7 +203,7 @@ void zmain(void)
         				BatteryLed_Write(0);
         				break;
         			else 
-        				BatteryLed_Write(0)
+        				BatteryLed_Write(1)
         				break;
 
         	}
