@@ -100,24 +100,25 @@ void zmain(void)
 {
     ADC_Battery_Start();        
 	int16 adcresult =0;
-    float  value_scaled= 0.0, value_scaled_compesated=0.0;
+    float  value_scaled= 0.0, value_scaled_compensated=0.0;
 
     printf("\nBoot\n");
-	do
-	{
 	if value_scaled_compensated < 4
 		BatteryLed_Write(1);
+
+	else if button == 0 && value_scaled_compensated > 4
+		BatteryLed_Write(0)
 
 	else 
 		BatteryLed_Write(0);
     //BatteryLed_Write(1); // Switch led on 
     //BatteryLed_Write(0); // Switch led off 
+    //uint8 button;
+    //button = SW1_Read();// read SW1 on pSoC board
     
-    uint8 button;
-    button = SW1_Read(); // read SW1 on pSoC board
-    }
-    while button == 0 && value_scaled_compensated > 4
-    	BatteryLed_Write(0);
+    while button == 0 && value_scaled_compensated > 4;
+    
+    //	BatteryLed_Write(0);
     
     // SW1_Read() returns zero when button is pressed
     // SW1_Read() returns one when button is not pressed
