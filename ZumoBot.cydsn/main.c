@@ -67,23 +67,72 @@ void zmain(void)
 #endif
 
 #if 0
-// Name and age
+// Name and age made by melinda
 void zmain(void)
 {
-    char name[32];
-    int age;
-    
+   // char name[32];
+    int age, execution_time;
+    TickType_t( int first_time, int last_time);
+	 
     
     printf("\n\n");
     
-    printf("Enter your name: ");
+   // printf("Enter your name: ");
     //fflush(stdout);
-    scanf("%s", name);
+   // scanf("%s", name);
+   
     printf("Enter your age: ");
     //fflush(stdout);
+	   first_time=xTaskGetTickCount( );
+	
     scanf("%d", &age);
-    
-    printf("You are [%s], age = %d\n", name, age);
+		last_time=xTaskGetTickCount( );
+		
+		 TickType_t(int first_time, int last_time)	
+              execution_time=last_time - first_time;
+			  
+		  if ( (0<=age) && (age<=21))
+		  {
+			  if (execution_time <= 3)
+		         printf("Super fast dude!");
+			 
+			else if (execution_time > 3 && execution_time <=5 )
+				 printf("So mediocre");
+			 
+			 else (execution_time > 5)
+				 printf("My granny is faster than you!");
+		  }
+	 
+         else if ( (22 <= age) && (age <= 50))
+		 {
+			 if (execution_time <= 3)
+		        printf("Be quick or be dead");
+			 
+			else if (execution_time > 3 && execution_time <= 5)
+				 printf("You’re so average.");
+			 
+			 else (execution_time > 5)
+				 printf("Have you been smoking something illegal?");
+		  }
+   
+	     else if ( ( 50<= age) )
+			 
+		 {
+			 if (execution_time <= 3)
+		        printf("Still going strong");
+			 
+			else if (execution_time > 3 && execution_time <=5 )
+				 printf("You are doing ok for your age.");
+			 
+			 else (execution_time >5 )
+				 printf("Do they still allow you to drive?");
+		 }
+		 
+				   
+         return 0;
+       
+	 }
+    //printf("You are [%s], age = %d\n", name, age);
 
     while(true)
     {
@@ -93,9 +142,8 @@ void zmain(void)
  }   
 #endif
 
-
 #if 1
-//battery level//
+//battery level made by eliza
 void zmain(void)
 {
     ADC_Battery_Start();        
