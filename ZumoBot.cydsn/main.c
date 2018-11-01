@@ -67,7 +67,7 @@ void zmain(void)
 #endif
 
 #if 0
-// Name and age made by melinda
+// Name and age made by melinda varo
 void zmain(void)
 {
    // char name[32];
