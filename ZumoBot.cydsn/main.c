@@ -53,7 +53,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
-#if 1
+#if 0
 // Hello World!
 void zmain(void)
 {
@@ -159,31 +159,30 @@ void zmain(void)
 void zmain(void)
 {
     ADC_Battery_Start();        
-	int16 adcresult =0;
+	int16 adcresult =0, state=0;
     float  value_scaled= 0.0, value_scaled_compensated=0.0;
 
     printf("\nBoot\n");
     uint8 button;
     button = SW1_Read()
-	while (1){
-		if(value_scaled_compensated >= 4)
+	switch (value_scaled_compensated)
+	{	
+		case (value_scaled_compensated >= 4)
 			{
-			state=0;
-				while(state==0)
+			BatteryLed_Write(0);
+			}
+		case (value_scaled_compensated < 4)
+			{
+			if(!(value_scaled_compensated < 4 && button == 1))
+				{
+				BatteryLed_Write(1);
+				}
+			else 
+				{
 					BatteryLed_Write(0);
-				if(value_scaled_compensated < 4)
-					{
-					state=1;
-						while(state==1){
-						do {
-							BatteryLed_Write(1);
-							while(!(value_scaled_compensated < 4 && button == 1))
-							state=0;
-							}
-						}
-					}
 				}
 			}
+	}	
 
 
 
