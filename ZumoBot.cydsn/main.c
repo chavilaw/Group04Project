@@ -71,110 +71,103 @@ void zmain(void)
 void zmain(void)
 {
    // char name[32];
-    int age, execution_time;
+    int age;
     TickType_t first_time, last_time, execution_time;
 	 
     
-    printf("\n\n");
+    //printf("\n\n");
     
    // printf("Enter your name: ");
     //fflush(stdout);
    // scanf("%s", name);
    
-    printf("Enter your age: ");
+    printf("Enter your age: \n");
     //fflush(stdout);
-	first_time=xTaskGetTickCount( );
-	
-    scanf("%d", &age);
+	first_time = xTaskGetTickCount( );
+	scanf("%d", &age);
 	last_time=xTaskGetTickCount( );
 		
 	execution_time=last_time - first_time;
 			  
-	if ( (0<=age) && (age<=21))
+	if (age<=21)
 	{
 		if (execution_time <= 3000)
-		{
-			printf("Super fast dude!");
-		}
-			 
+			printf("Super fast dude!\n");
+					 
 		else if (execution_time > 3000 && execution_time <= 5000 )
-		{
-			printf("So mediocre");
-		}
-			 
-		else (execution_time > 5000)
-		{
-			printf("My granny is faster than you!");
-		}
+			printf("So mediocre\n");
+					 
+		else
+			printf("My granny is faster than you!\n");
+		
 	}
 	 
-    else if ( (22 <= age) && (age <= 50))
-		 {
+    else if ( (age > 21) && (age <= 50))
+	{
 		if (execution_time <= 3000)
-		{
-			printf("Be quick or be dead");
-		}
-			 
+			printf("Be quick or be dead\n");
+					 
 		else if (execution_time > 3000 && execution_time <= 5000)
-		{
-			printf("You’re so average.");
-		}
-			 
-		else (execution_time > 5000)
-		{
-			printf("Have you been smoking something illegal?");
-		  }
+			printf("You\'re so average.\n");
+					 
+		else
+			printf("Have you been smoking something illegal?\n");
+	}
    
-	     else if ( ( 50<= age) )
+	else 
+	{
+		if (execution_time <= 3000)
+		    printf("Still going strong\n");
+		
+		else if (execution_time > 3000 && execution_time <=5000 )
+			printf("You are doing ok for your age.\n");
 			 
-		 {
-			 if (execution_time <= 3000)
-			 {
-		        printf("Still going strong");
-			 }
-			 
-			else if (execution_time > 3000 && execution_time <=5000 )
-			{
-				 printf("You are doing ok for your age.");
-			}
-			 
-			 else (execution_time >5000 )
-			 {
-				 printf("Do they still allow you to drive?");
-			 }
-		 }
-	 }
+		else
+			printf("Do they still allow you to drive?\n");
+			
+	}
     //printf("You are [%s], age = %d\n", name, age);
-
-    while(true)
+    while(1)
+    {
+    }
+    /*while(true)
     {
         BatteryLed_Write(!SW1_Read());
         vTaskDelay(100);
-    }
+    }*/
  }   
 #endif
 
 #if 1
 //battery level made by eliza
+int16 measure(void);
+
 void zmain(void)
 {
     ADC_Battery_Start();        
-	int16 adcresult =0, value=0, state=0;
+	int16 adcresult =0, value=0, status=0;
+    uint8_t button;
     float  value_scaled= 0.0, volt=0.0;
 
     printf("\nBoot\n");
-    uint8 button;
     
     //BatteryLed_Write(1); // Switch led on 
     //BatteryLed_Write(0); // Switch led off 
-    //uint8 button;
-    //button = SW1_Read();// read SW1 on pSoC board    
+    
+    button = SW1_Read();// read SW1 on pSoC board    
+    
     //BatteryLed_Write(0);    
     // SW1_Read() returns zero when button is pressed
     // SW1_Read() returns one when button is not pressed
-
-    for(;;)
-    {
+	if(volt > 4)
+        status = 0;
+	else
+        status = 1;
+    //for(;;)
+		
+	int16 measure(void)
+	{
+		for(;;)
         char msg[80];
         ADC_Battery_StartConvert(); // start sampling
         if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
@@ -184,32 +177,50 @@ void zmain(void)
 			volt =  value_scaled * 3 /2; // you need to implement the conversion
                     
             // Print both ADC results and converted value
-            printf("%.2f\n" ,value_scaled_compensated ); 
+            printf("%.2f\n" ,volt); 
         }
-        if(volt > 4)
-        	status = 0;
-        else
-        	status = 1;
-        while(1){
-        	case 0:
+	}    
+		
+       
+	switch(status) 
+	{
+        case 0:
         	{
         		BatteryLed_Write(0);
         		break;
         	}
-        	case 1:
+        case 1:
         	{
         		BatteryLed_Write(1);
-        			if (volt > 4 && button(0))
-        				BatteryLed_Write(0);
+        			if (volt > 4 && button == 0)
+                    {BatteryLed_Write(0);
         				break;
+                    }
         			else 
-        				BatteryLed_Write(1)
+                    {	BatteryLed_Write(1);
         				break;
-
-        	}
-    vTaskDelay(500);
+                    }
+			}
+	}
+	}   
+while(1) 
+	{
     }
- }   
+    vTaskDelay(500);
+
+ }  
+int16 measure(void)
+{
+if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
+        {   // wait for ADC converted value
+            value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
+            value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
+			volt =  value_scaled * 3 /2; // you need to implement the conversion
+                    
+            // Print both ADC results and converted value
+            printf("%.2f\n" ,volt); 
+		}
+}
 #endif
     
 
@@ -290,11 +301,11 @@ void zmain(void)
 #include <stdlib.h>
 #include <ctype.h>
 #define F_CPU 16000000
-#include <avr/io.h>
-#include <util/delay.h>
+//#include <avr/io.h>
+//#include <util/delay.h>
 
 
-void blink(int frequency){
+//void blink(){
 
     
 /*
@@ -312,7 +323,9 @@ After the sequence the program goes back to wait for another button press to sta
 
  */
 
-    
+void blink_S();
+void blink_O();
+ 
 void zmain(void)
 {
     printf("\nBoot\n");
@@ -325,58 +338,76 @@ void zmain(void)
     // SW1_Read() returns zero when button is pressed
     // SW1_Read() returns one when button is not pressed
     
-    bool led = false;
+    //bool led = false;
     
     for(;;)
     {
         // toggle led state when button is pressed
         
-        if(SW1_Read() == 0) {    // == 0, means its already paused
+        /* if(SW1_Read() == 0) 
+		{    // == 0, means its already paused
             
-            led = !led;
-            if(led == true ) ;
-            BatteryLed_Write(led);    //check if the function should be true
-}
-            
-      
-            
-void blink_S()
-{
-            BatteryLed_Write(50);        // S = dot / dot / dot
-            vTaskDelay(50);   
-            BatteryLed_Write(50)        
-            vTaskDelay(50);
-            BatteryLed_Write(50);
-            vTaskDelay(100);
-    
-            //The length of dash is three times the lengt of a dot.
-            
-            //between letter and letter, one dot time as gap
-            BatteryLed_Write(50);
-}
-            
-void blink_O()
-{
-            vTaskDelay(100);             // o = dash / dash / dash
-            BatteryLed_Write(150);
-            vTaskDelay(50);   
-            BatteryLed_Write(150);       
-            vTaskDelay(50); 
-            BatteryLed_Write(150);   
-            vTaskDelay(100);
-    
-            //here, one dot time as gap
-            BatteryLed_Write(50);
-}
-              
-            
-            if
-            { (SW1_Read(led) == 0)  // wait while button is being pressed
-                blink_S();
+            //led = !led;
+            if(led == true )
+				BatteryLed_Write(led);    //check if the function should be true
+		} */
+		if(SW1_Read() == 0)  // wait while button is being pressed
+            {
+				blink_S();
                 blink_O();
                 blink_S();
              
-             }
+            }
+        else
+			BatteryLed_Write(0);
+    } 
+            
+
+              
+            
+           
+}
+void blink_S()
+	{
+            BatteryLed_Write(1);        // S = dot / dot / dot
+            vTaskDelay(500); 
+			BatteryLed_Write(0);
+            vTaskDelay(500); 
+            BatteryLed_Write(1);       
+            vTaskDelay(500);
+			BatteryLed_Write(0);
+            vTaskDelay(500); 
+            BatteryLed_Write(1);
+            vTaskDelay(500);
+            BatteryLed_Write(0);
+			vTaskDelay(500);
+            
+            //The length of dash is three times the lengt of a dot.
+            //between letter and letter, one dot time as gap
+            
+	}
+            
+void blink_O()
+	{
+            //vTaskDelay(100);             // o = dash / dash / dash
+            BatteryLed_Write(1);
+            vTaskDelay(1500);
+			BatteryLed_Write(0);
+            vTaskDelay(1500);
+            BatteryLed_Write(1);       
+            vTaskDelay(1500);
+			BatteryLed_Write(0);
+            vTaskDelay(1500);
+            BatteryLed_Write(1);   
+            vTaskDelay(1500);
+            BatteryLed_Write(0);
+            vTaskDelay(1500);
+			
+    
+            //here, one dot time as gap
+			//BatteryLed_Write(0);
+            //vTaskDelay(500);
+	}
 
 #endif
 
