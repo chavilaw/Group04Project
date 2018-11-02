@@ -140,18 +140,23 @@ void zmain(void)
 
 #if 1
 //battery level made by eliza
+void measure_battery();
+void warning_cycle();
+bool condition=false;
+uint8_t button;
+int16 value;
+int16 adcresult;
+float  value_scaled, volt;
 
 void zmain(void)
 {
     ADC_Battery_Start();   
-    bool condition=false;     
-	int16 adcresult =0, value=0, status=0;
-    uint8_t button;
-    float  value_scaled= 0.0, volt=0.0;
+    ADC_Battery_StartConvert();
+    
     printf("\nBoot\n");
     //BatteryLed_Write(1); // Switch led on 
     //BatteryLed_Write(0); // Switch led off 
-    button = SW1_Read();// read SW1 on pSoC board    
+    //button = SW1_Read();// read SW1 on pSoC board    
     //uint8_t button;
     //BatteryLed_Write(0);    
     // SW1_Read() returns zero when button is pressed
@@ -161,45 +166,42 @@ void zmain(void)
 	{
 		if(condition==false)
 			measure_battery();
-		else
+		else if (condition == true)
 			warning_cycle();
 	}
-		for(;;)
-        char msg[80];
-        ADC_Battery_StartConvert(); // start sampling
-        if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
-        {   // wait for ADC converted value
-            value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
-            value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
-			volt =  value_scaled * 3 /2; // you need to implement the conversion
-                    
-            // Print both ADC results and converted value
-            //printf("%.2f\n" ,volt); 
-        }
-	  
-		
-  
-    vTaskDelay(500);
-
 }  
-measure_battery()
+void measure_battery()
 {
-	while condition==false
-		if (volt <= 4)
+	value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
+	volt =  value_scaled * 3 /2;
+	while (condition == false)
+    {
+        ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT);
+        value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
+        float value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
+	    volt =  value_scaled * 3 /2;
+        printf("%d %f\r\n", value, volt);
+		if (volt <= 4.0)
+        {
 			condition=true; 
-		else
-			condition=false;
+        }
+        vTaskDelay(500);
+    }
 }
-warning_cycle()
-{
-	while condition==true
-		BatteryLed_Write(1);
-		if (button = 0)
-			BatteryLed_Write(0);
-			condition=false;
-		else 
-			condition=true
 
+void warning_cycle()
+{
+    while (condition==true)
+    {
+		BatteryLed_Write(1);
+        vTaskDelay(500);
+        BatteryLed_Write(0);
+        vTaskDelay(500);
+		if (SW1_Read() == 0)
+		{	
+			condition=false;
+        }
+    }
 }
 #endif
     
