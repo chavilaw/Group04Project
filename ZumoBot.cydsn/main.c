@@ -475,11 +475,13 @@ void zmain(void)
 
 #if 1
 //motor
-void straight_line();
-void tankturn_right();
+void straight_line(void);
+void tankturn_right(void);
 
 void zmain(void)
 {
+	motor_start();
+
     /*motor_start();              // enable motor controller
     motor_forward(0,0);         // set speed to zero to stop motors
 
@@ -496,12 +498,10 @@ void zmain(void)
     */
     while(1)
     {
-
-
 //step 1
 	if SW1_Read == 0
 		{
-		motor_start();
+		vTaskDelay(500);
 
 //step 2
 		straight_line();
@@ -530,8 +530,8 @@ void straight_line()
 
 void tankturn_right()
 {
-	motor_forward(100,2000);
-	motor_backward(100,2000);
+	motor_forward(100,0,2000);
+	motor_backward(0,100,2000);
 
 }
 #endif
