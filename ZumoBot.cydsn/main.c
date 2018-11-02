@@ -141,85 +141,66 @@ void zmain(void)
 #if 1
 //battery level made by eliza
 int16 measure(void);
+int16 alarm(void);
+
 
 void zmain(void)
+
+
 {
     ADC_Battery_Start();        
 	int16 adcresult =0, value=0, status=0;
     uint8_t button;
     float  value_scaled= 0.0, volt=0.0;
-
-    printf("\nBoot\n");
+	printf("\nBoot\n");
     
     //BatteryLed_Write(1); // Switch led on 
     //BatteryLed_Write(0); // Switch led off 
-    
-    button = SW1_Read();// read SW1 on pSoC board    
-    
+    //uint8_t button;
+    //button = SW1_Read();// read SW1 on pSoC board    
     //BatteryLed_Write(0);    
     // SW1_Read() returns zero when button is pressed
     // SW1_Read() returns one when button is not pressed
-	if(volt > 4)
-        status = 0;
-	else
-        status = 1;
     //for(;;)
-		
-	int16 measure(void)
+
+while(1)
 	{
-		for(;;)
+	// check measure volts function
+		
+	// if measure < 4
+		//light on 
+		// button press thing
+	//else 
+		//light off
+	}
+
+	for(;;)
+	{
         char msg[80];
         ADC_Battery_StartConvert(); // start sampling
         if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
         {   // wait for ADC converted value
             value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
             value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
-			volt =  value_scaled * 3 /2; // you need to implement the conversion
+			 // you need to implement the conversion
                     
             // Print both ADC results and converted value
-            printf("%.2f\n" ,volt); 
+            //printf("%.2f\n" ,volt); 
         }
-	}    
+	}   
 		
        
-	switch(status) 
-	{
-        case 0:
-        	{
-        		BatteryLed_Write(0);
-        		break;
-        	}
-        case 1:
-        	{
-        		BatteryLed_Write(1);
-        			if (volt > 4 && button == 0)
-                    {BatteryLed_Write(0);
-        				break;
-                    }
-        			else 
-                    {	BatteryLed_Write(1);
-        				break;
-                    }
-			}
-	}
-	}   
-while(1) 
-	{
-    }
-    vTaskDelay(500);
+	   
+vTaskDelay(500);
 
- }  
+}  
 int16 measure(void)
 {
-if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
-        {   // wait for ADC converted value
-            value = ADC_Battery_GetResult16(); // get the ADC value (0 - 4095)
-            value_scaled = ( value *5.0 ) / 4095; // convert value to Volts
-			volt =  value_scaled * 3 /2; // you need to implement the conversion
-                    
-            // Print both ADC results and converted value
-            printf("%.2f\n" ,volt); 
-		}
+	volt =  value_scaled * 3 /2;
+}
+int16 alarm(void)
+{
+	BatteryLed_Write(1)
 }
 #endif
     
