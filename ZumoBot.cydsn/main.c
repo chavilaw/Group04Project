@@ -530,9 +530,8 @@ void straight_line()
 
 void tankturn_right()
 {
-	motor_forward(100,0,2000);
-	motor_backward(0,100,2000);
-
+	motor_forward(100,2000);
+	motor_backward(100,2000);
 }
 #endif
 
