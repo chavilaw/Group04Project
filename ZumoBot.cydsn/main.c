@@ -473,6 +473,69 @@ void zmain(void)
 }
 #endif
 
+#if 1
+//motor
+void straight_line();
+void tankturn_right();
+
+void zmain(void)
+{
+    /*motor_start();              // enable motor controller
+    motor_forward(0,0);         // set speed to zero to stop motors
+
+    vTaskDelay(3000);
+    
+    motor_forward(100,2000);     // moving forward, milisecond delay how long motor is on
+    motor_turn(200,50,2000);     // turn
+    motor_turn(50,200,2000);     // turn
+    motor_backward(100,2000);    // moving backward
+     
+    motor_forward(0,0);         // stop motors 
+
+    motor_stop();               // disable motor controller, full stop need start again to go
+    */
+    while(1)
+    {
+
+
+//step 1
+	if SW1_Read == 0
+		{
+		motor_start();
+
+//step 2
+		straight_line();
+//step 3
+		tankturn_right();
+//step 4
+		straight_line();
+//step 5
+		tankturn_right();
+//step 6
+		straight_line();
+//step 7
+		motor_turn(200,50,2000);
+//step 8
+		motor_forward(0,0)
+	}
+	else
+		motor_stop(); 
+
+}
+void straight_line()
+{
+ motor_forward(100,2000)
+
+}
+
+void tankturn_right()
+{
+	motor_forward(100,2000);
+	motor_backward(100,2000);
+
+}
+#endif
+
 #if 0
 /* Example of how to use te Accelerometer!!!*/
 void zmain(void)
