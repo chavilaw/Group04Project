@@ -138,7 +138,7 @@ void zmain(void)
  }   
 #endif
 
-#if 1
+#if 0
 //battery level made by eliza
 void measure_battery();
 void warning_cycle();
@@ -499,7 +499,7 @@ void zmain(void)
 
 
 //step 1
-	if SW1_Read == 0
+	if (SW1_Read == 0)
 		{
 		motor_start();
 
@@ -516,15 +516,15 @@ void zmain(void)
 //step 7
 		motor_turn(200,50,2000);
 //step 8
-		motor_forward(0,0)
+		motor_forward(0,0);
 	}
 	else
 		motor_stop(); 
-
+    }
 }
 void straight_line()
 {
- motor_forward(100,2000)
+ motor_forward(100,2000);
 
 }
 
