@@ -350,44 +350,48 @@ void blink_O()
 #endif
 
 
-#if 0
+#if 1
 //ultrasonic sensor//
 
 int motorVelocity = 60;
-
+void beep_reverse();
+int d = 0; // Print the detected distance (centimeters)
+    
 void zmain(void)
 {
     Ultra_Start();              // Ultra Sonic Start function
-    
+    //if (SW1_Read() == 0)
+    //{
     motor_start();              // enable motor controller
     motor_forward(0,0);     // moving forward
     
     vTaskDelay(500);
+    //}
     
-
+   // else
+   //motor_forward(0,0);
 
 for(;;)
 {
     
     while(1) {
-        int d = Ultra_GetDistance(); // Print the detected distance (centimeters)
         
-        
-        if(d = > 10) // if the distance is less than 10 cm
+        d = Ultra_GetDistance(); // Print the detected distance (centimeters)
+    
+        if(d <= 10) // if the distance is less than 10 cm
         
          {
             motor_forward(0,0);         // set speed to zero to stop motor
             vTaskDelay(500);
-            command();
-            vTaskDelay(500);
-            --d;
-         }
+            beep_reverse();
+            vTaskDelay(100);
+          }
         
         else // if the distance is moore than 10 cm
         
          {
-            motor_forward(100,2000);         // set speed to zero to stop motor
-            vTaskDelay(500);
+            motor_forward(100,0);         // set speed to zero to stop motor
+            vTaskDelay(0);
          }
     }
         
@@ -396,15 +400,14 @@ for(;;)
 }
         
 
-void command();
- {
-   Beep(1000, 150);    // moving backward
+void beep_reverse()
+{
+   Beep(1000,150);    // moving backward
             
-   motor_turn(200,50,500); //turn first
-        
-   motor_turn(200,50,2000)
-        while motor_backward(100,2000);     // turn & move backward
-        vTaskDelay(100);
+  motor_backward(100,2000); //turn first
+  motor_turn(100,25,250);
+        //while motor_backward(100,2000);     // turn & move backward
+        vTaskDelay(1000);
  }
 
 #endif
@@ -518,7 +521,7 @@ void zmain(void)
 }
 #endif
 
-#if 1
+#if 0
 //motor
 void straight_line();
 void tankturn_right();
@@ -779,10 +782,10 @@ void command();
  {
    Beep(1000, 150);    // moving backward
             
-   motor_turn(200,50,500); //turn first
+   motor_backward(100,2000); //turn first
         
    motor_turn(200,50,2000)
-        while motor_backward(100,2000);     // turn & move backward
+        //while motor_backward(100,2000);     // turn & move backward
         vTaskDelay(100);
 
  }
