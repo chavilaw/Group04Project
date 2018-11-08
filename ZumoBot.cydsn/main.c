@@ -508,19 +508,19 @@ void zmain(void)
 		vTaskDelay(500);
 
 //step 2
-		straight_line(200,500);
+		straight_line(200,2000);
 //step 3
-		tankturn_right(200,200,500);
+		//tankturn_right(200,200,500);
 //step 4
-		straight_line(200,500);
+		//straight_line(200,500);
 //step 5
-		tankturn_right(200,200,500);
+		//tankturn_right(200,200,500);
 //step 6
-		straight_line(200,500);
+		//straight_line(200,500);
 //step 7
-		motor_turn(200,50,2000);
+		//motor_turn(200,50,2000);
 //step 8
-		motor_forward(0,0);
+		//motor_forward(0,0);
 	}
 	else
 		motor_forward(0,0); 
