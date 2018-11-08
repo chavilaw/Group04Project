@@ -508,18 +508,27 @@ void zmain(void)
 		vTaskDelay(500);
 
 //step 2
-		motor_forward(200,2000);
+		motor_forward(150,2100);
+        motor_forward(0,0);
 
 //step 3
-		//tankturn_right(200,200,500);
+        /*
+		tankturn_right(150,150,250);
+        motor_forward(0,0);
 //step 4
-		motor_forward(200,2000);
+		motor_forward(150,1800);
+        motor_forward(0,0);
 //step 5
-		//tankturn_right(200,200,500);
+		tankturn_right(150,150,250);
+        motor_forward(0,0);
 //step 6
-		motor_forward(200,2000);
-//step 7
-		//motor_turn(200,50,2000);
+		motor_forward(150,2000);
+        motor_forward(0,0);
+//step 7 */
+        tankturn_right(150,150,250);
+        motor_forward(0,0);
+		motor_turn(150,100,2500);
+        motor_forward(0,0);
 //step 8
 		//motor_forward(0,0);
 	}
@@ -539,10 +548,10 @@ void zmain(void)
 }
 */
 
-void tankturn_right()
+void tankturn_right(f_speed, b_speed, delay)
 {
 	MotorDirLeft_Write(0);      // set LeftMotor forward mode
-    MotorDirRight_Write(1);     // set RightMotor forward mode
+    MotorDirRight_Write(1);     // set RightMotor backward mode
     PWM_WriteCompare1(f_speed); 
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
