@@ -732,6 +732,7 @@ void zmain(void)
  }   
 #endif
 
+<<<<<<< HEAD
 #if 0
 //ultrasonic sensor//
 
@@ -796,5 +797,7 @@ void command();
 
 #endif
 
+=======
+>>>>>>> a6bff9d2e110d69e24b580b49f08bbc3d00aafaa
 
 /* [] END OF FILE */
