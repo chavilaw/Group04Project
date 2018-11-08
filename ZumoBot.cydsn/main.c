@@ -475,8 +475,12 @@ void zmain(void)
 
 #if 1
 //motor
-void straight_line(void);
-void tankturn_right(void);
+void straight_line();
+void tankturn_right();
+uint8 speed;
+uint32 delay;
+uint8 f_speed;
+uint8 b_speed;
 
 void zmain(void)
 {
@@ -522,9 +526,10 @@ void zmain(void)
 		motor_forward(0,0); 
     }
 }
-void straight_line(uint8 speed,uint32 delay)
+void straight_line()
 {
- MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    
+    MotorDirLeft_Write(0);      // set LeftMotor forward mode
     MotorDirRight_Write(0);     // set RightMotor forward mode
     PWM_WriteCompare1(speed); 
     PWM_WriteCompare2(speed); 
@@ -532,7 +537,7 @@ void straight_line(uint8 speed,uint32 delay)
 
 }
 
-void tankturn_right(uint8 f_speed, uint8 b_speed, uint32 delay)
+void tankturn_right()
 {
 	MotorDirLeft_Write(0);      // set LeftMotor forward mode
     MotorDirRight_Write(1);     // set RightMotor forward mode
