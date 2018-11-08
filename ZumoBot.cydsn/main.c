@@ -47,6 +47,7 @@
 #include <sys/time.h>
 #include "serial1.h"
 #include <unistd.h>
+#include <stdlib.h>
 /**
  * @file    main.c
  * @brief   
@@ -350,7 +351,7 @@ void blink_O()
 #endif
 
 
-#if 1
+#if 0
 //ultrasonic sensor//
 
 int motorVelocity = 60;
@@ -608,8 +609,11 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 0
+#if 1
 /* Example of how to use te Accelerometer!!!*/
+void random_reverse();
+int n=0;
+
 void zmain(void)
 {
     struct accData_ data;
@@ -623,14 +627,63 @@ void zmain(void)
     else {
         printf("Device Ok...\n");
     }
+    motor_start();              // enable motor controller
+    motor_forward(0,0);    		// moving forward
+    vTaskDelay(500);
     
     for(;;)
     {
         LSM303D_Read_Acc(&data);
         printf("%8d %8d %8d\n",data.accX, data.accY, data.accZ);
-        vTaskDelay(50);
+       // vTaskDelay(50);
+      
+       
+        if(!(data.accX < -1000)) // if the distance is less than 10 cm
+           { 
+         	motor_forward(100,0);         // set speed to zero to stop motor
+           // vTaskDelay(100);
+         	int n = rand() %2;
+         	if (n == 0)
+         	    {
+         		motor_turn(100,25,250);//turn first 
+  				//vTaskDelay(1000);
+  			    }
+ 			 else 
+ 			    {
+ 			 	motor_turn(25,100,250);
+		       // vTaskDelay(1000);
+                }
+            }
+         else
+            {
+            motor_forward(0,0);         // set speed to zero to stop motor
+            //vTaskDelay(500);
+            random_reverse();
+            //vTaskDelay(100);
+            }
+        
     }
- }   
+        
+     vTaskDelay(10);
+}
+        
+
+void random_reverse()
+{    
+            
+  motor_backward(100,2000); // moving backward
+  int n = rand() %2;
+  if (n == 0)
+  {
+  	motor_turn(100,25,250);//turn first 
+  //vTaskDelay(1000);
+    }
+  else 
+  	{
+  	motor_turn(25,100,250);
+    //vTaskDelay(1000);
+	}
+ } 
 #endif    
 
 #if 0
@@ -732,11 +785,12 @@ void zmain(void)
  }   
 #endif
 
-<<<<<<< HEAD
+
 #if 0
 //ultrasonic sensor//
 
 int motorVelocity = 60;
+int d = 0;
 
 void zmain(void)
 {
@@ -753,7 +807,7 @@ for(;;)
 {
     
     while(1) {
-        int d = Ultra_GetDistance(); // Print the detected distance (centimeters)
+        d = Ultra_GetDistance(); // Print the detected distance (centimeters)
         
         
         if(d = > 10) // if the distance is less than 10 cm
@@ -769,8 +823,8 @@ for(;;)
         else // if the distance is moore than 10 cm
         
          {
-            motor_forward(100,2000);         // set speed to zero to stop motor
-            vTaskDelay(500);
+            motor_forward(100,0);         // set speed to zero to stop motor
+            vTaskDelay(0);
          }
     }
         
@@ -786,8 +840,7 @@ void command();
    motor_backward(100,2000); //turn first
         
    motor_turn(200,50,2000)
-        //while motor_backward(100,2000);     // turn & move backward
-        vTaskDelay(100);
+    vTaskDelay(100);
 
  }
     
@@ -796,8 +849,4 @@ void command();
 
 
 #endif
-
-=======
->>>>>>> a6bff9d2e110d69e24b580b49f08bbc3d00aafaa
-
 /* [] END OF FILE */
