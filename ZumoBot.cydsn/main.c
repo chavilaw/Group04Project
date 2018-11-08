@@ -727,4 +727,69 @@ void zmain(void)
  }   
 #endif
 
+#if 0
+//ultrasonic sensor//
+
+int motorVelocity = 60;
+
+void zmain(void)
+{
+    Ultra_Start();              // Ultra Sonic Start function
+    
+    motor_start();              // enable motor controller
+    motor_forward(0,0);     // moving forward
+    
+    vTaskDelay(500);
+    
+
+
+for(;;)
+{
+    
+    while(1) {
+        int d = Ultra_GetDistance(); // Print the detected distance (centimeters)
+        
+        
+        if(d = > 10) // if the distance is less than 10 cm
+        
+         {
+            motor_forward(0,0);         // set speed to zero to stop motor
+            vTaskDelay(500);
+            command();
+            vTaskDelay(500);
+            --d;
+         }
+        
+        else // if the distance is moore than 10 cm
+        
+         {
+            motor_forward(100,2000);         // set speed to zero to stop motor
+            vTaskDelay(500);
+         }
+    }
+        
+     vTaskDelay(10);
+}
+}
+        
+
+void command();
+ {
+   Beep(1000, 150);    // moving backward
+            
+   motor_turn(200,50,500); //turn first
+        
+   motor_turn(200,50,2000)
+        while motor_backward(100,2000);     // turn & move backward
+        vTaskDelay(100);
+
+ }
+    
+    
+    
+
+
+#endif
+
+
 /* [] END OF FILE */
