@@ -481,7 +481,7 @@ void tankturn_right(void);
 void zmain(void)
 {
 	motor_start();
-
+	motor_forward(0,0);
     /*motor_start();              // enable motor controller
     motor_forward(0,0);         // set speed to zero to stop motors
 
@@ -499,39 +499,46 @@ void zmain(void)
     while(1)
     {
 //step 1
-	if (SW1_Read == 0)
+	if (SW1_Read() == 0)
 		{
 		vTaskDelay(500);
 
 //step 2
-		straight_line();
+		straight_line(200,500);
 //step 3
-		tankturn_right();
+		tankturn_right(200,200,500);
 //step 4
-		straight_line();
+		straight_line(200,500);
 //step 5
-		tankturn_right();
+		tankturn_right(200,200,500);
 //step 6
-		straight_line();
+		straight_line(200,500);
 //step 7
 		motor_turn(200,50,2000);
 //step 8
 		motor_forward(0,0);
 	}
 	else
-		motor_stop(); 
+		motor_forward(0,0); 
     }
 }
-void straight_line()
+void straight_line(uint8 speed,uint32 delay)
 {
- motor_forward(100,2000);
+ MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    MotorDirRight_Write(0);     // set RightMotor forward mode
+    PWM_WriteCompare1(speed); 
+    PWM_WriteCompare2(speed); 
+    vTaskDelay(delay);
 
 }
 
-void tankturn_right()
+void tankturn_right(uint8 f_speed, uint8 b_speed, uint32 delay)
 {
-	motor_forward(100,2000);
-	motor_backward(100,2000);
+	MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    MotorDirRight_Write(1);     // set RightMotor forward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
 }
 #endif
 
