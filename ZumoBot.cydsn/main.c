@@ -638,19 +638,20 @@ void zmain(void)
        // vTaskDelay(50);
       
        
-        if(!(data.accX < -1000)) // if the distance is less than 10 cm
+        if(data.accX > -1000) // no obstacle or bump --> CHECK IF WHILE DRIVING THIS VALUE IS VALID!!
            { 
-         	motor_forward(100,0);         // set speed to zero to stop motor
+         	motor_forward(0,0) //into forward mode
+         	motor_forward(100,0);         // go forward
            // vTaskDelay(100);
-         	int n = rand() %2;
+         	int n = rand() %2; // randomly 0 or 1
          	if (n == 0)
          	    {
-         		motor_turn(100,25,250);//turn first 
+         		motor_turn(100,25,250);//turn left
   				//vTaskDelay(1000);
   			    }
  			 else 
  			    {
- 			 	motor_turn(25,100,250);
+ 			 	motor_turn(25,100,250); //turn right
 		       // vTaskDelay(1000);
                 }
             }
@@ -658,7 +659,7 @@ void zmain(void)
             {
             motor_forward(0,0);         // set speed to zero to stop motor
             //vTaskDelay(500);
-            random_reverse();
+            random_reverse(); //go backward and random turn 
             //vTaskDelay(100);
             }
         
