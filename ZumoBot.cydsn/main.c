@@ -351,7 +351,7 @@ void blink_O()
 #endif
 
 
-#if 0
+#if 1
 //ultrasonic sensor//
 
 int motorVelocity = 60;
@@ -609,7 +609,7 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 1
+#if 0
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
