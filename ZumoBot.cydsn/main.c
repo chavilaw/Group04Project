@@ -613,11 +613,17 @@ void tankturn_right(f_speed, b_speed, delay)
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
-
+void tankturn_right();
+void tankturn_left();
+uint8 speed;
+uint32 delay;
+uint8 f_speed;
+uint8 b_speed;
 void zmain(void)
 {
     struct accData_ data;
-    
+    int i=0;
+    bool hit=0;
     printf("Accelerometer test...\n");
 
     if(!LSM303D_Start()){
@@ -628,47 +634,78 @@ void zmain(void)
         printf("Device Ok...\n");
     }
     motor_start();              // enable motor controller
-    motor_forward(0,0);    		// moving forward
+    motor_forward(100,0);    		// moving forward
     vTaskDelay(500);
     
     for(;;)
     {
         LSM303D_Read_Acc(&data);
         printf("%8d %8d %8d\n",data.accX, data.accY, data.accZ);
-       // vTaskDelay(50);
-      
+        vTaskDelay(10);
+     
        
-        if(data.accX > -1000) // no obstacle or bump --> CHECK IF WHILE DRIVING THIS VALUE IS VALID!!
-           { 
-         	motor_forward(0,0) //into forward mode
-         	motor_forward(100,0);         // go forward
+        //if(data.accX > -1000 && data.accX<1200) // no obstacle or bump 
+        //{ 
+            for(i=0;i<=1000;i++)
+            {
+                motor_forward(150,1);
+                if (data.accX < -1000)
+                {
+                hit=1;
+                break;
+               
+         	   // motor_forward(0,0); //into forward mode
+         	             // go forward
+                }
+            //}
            // vTaskDelay(100);
          	int n = rand() %2; // randomly 0 or 1
-         	if (n == 0)
+         	
+            if (n == 0)
          	    {
-         		motor_turn(100,25,250);//turn left
+         		tankturn_left(25,100,500);//tank_turn left
   				//vTaskDelay(1000);
   			    }
  			 else 
  			    {
- 			 	motor_turn(25,100,250); //turn right
+ 			 	tankturn_right(100,25,500); //tank_turn right
 		       // vTaskDelay(1000);
                 }
-            }
-         else
+            
+            
+        }
+        //else 
+        if (hit==1)
             {
             motor_forward(0,0);         // set speed to zero to stop motor
             //vTaskDelay(500);
             random_reverse(); //go backward and random turn 
             //vTaskDelay(100);
             }
-        
+        else
+            hit=0;
+       
     }
         
      vTaskDelay(10);
 }
         
-
+void tankturn_right(f_speed, b_speed, delay)
+{
+	MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    MotorDirRight_Write(1);     // set RightMotor backward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+}
+void tankturn_left(f_speed, b_speed, delay)
+{
+	MotorDirLeft_Write(1);      // set LeftMotor backward mode
+    MotorDirRight_Write(0);     // set RightMotor forward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+}
 void random_reverse()
 {    
             
@@ -676,12 +713,12 @@ void random_reverse()
   int n = rand() %2;
   if (n == 0)
   {
-  	motor_turn(100,25,250);//turn first 
+  	tankturn_left(100,25,250);//turn first 
   //vTaskDelay(1000);
     }
   else 
   	{
-  	motor_turn(25,100,250);
+  	tankturn_right(25,100,250);
     //vTaskDelay(1000);
 	}
  } 
