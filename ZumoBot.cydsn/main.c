@@ -652,7 +652,7 @@ void zmain(void)
     	if (data.accX < -1000)
     	hit = 0;
     	else  
-    	hit = 1
+    	hit = 1;
 	    while (hit == 1)
 		{
 			for(i=0;i<=1000;i++)
@@ -671,7 +671,7 @@ void zmain(void)
 	        }        
 		}
 
-	   	if hit == 0
+	   	if (hit == 0)
 	   	{
 	   		motor_forward(0,0);
 	   		random_reverse();
