@@ -929,7 +929,7 @@ void command();
 
 #endif
 
-#if 1
+#if 0
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void)
@@ -1027,6 +1027,94 @@ void tankturn_left(f_speed, b_speed, delay)
     vTaskDelay(delay);
 }
 
+#endif 
+#if 1
+
+void Go_Stop (void);
+void Go_Stop2 (void);
+struct sensors_ dig;
+void IR_Start(void);
+void IR_flush(void);
+void IR_wait(void);
+
+void zmain(void)
+{
+
+//struct sensors_ ref;
+
+
+reflectance_start();
+reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
+//SW1_Read(); //button 
+IR_Start();
+IR_flush();
+
+for(;;)
+    {
+        // read digital values that are based on threshold. 0 = white, 1 = black
+        reflectance_digital(&dig); 
+        printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        vTaskDelay(0);
+    if (SW1_Read()== 0)// button press
+    	Go_Stop();
+    	IR_wait();
+		Go_Stop2 ();
+
+    else 
+        motor_start();
+
+    }
+
+
+
+
+
+}
+void Go_Stop2 (void)
+{
+	int stops=0;
+	motor_start();
+	motor_forward(0,0);
+
+	while(1)
+	{
+		reflectance_digital(&dig);
+		do
+		{
+			motor_forward(150,0);
+			if ((dig.l3 == 1) && (dig.r3 == 1))
+				stops = stops ++;
+			else stops;
+		}
+			while (((dig.l3 == 0) && (dig.r3 == 0))||((dig.l3 == 1) && (dig.r3 == 1) && stops<3));
+
+        motor_forward(0,0);
+	}
+}
+
+void Go_Stop (void)
+{
+   
+	motor_start();
+	motor_forward(0,0);
+    
+while (1)
+{
+    reflectance_digital(&dig);
+while ((dig.l3 == 0) && (dig.r3 == 0))
+   {
+    //reflectance_digital(&dig);	
+    motor_forward(100,0);
+    reflectance_digital(&dig);
+    }
+if ((dig.l3 == 1) && (dig.r3 == 1))
+    {
+    motor_forward(0,0);
+    reflectance_digital(&dig);
+    }
+    
+}
+}
 #endif 
  
 /* [] END OF FILE */
