@@ -1033,9 +1033,6 @@ void tankturn_left(f_speed, b_speed, delay)
 void Go_Stop (void);
 void Go_Stop2 (void);
 struct sensors_ dig;
-void IR_Start(void);
-void IR_flush(void);
-void IR_wait(void);
 
 void zmain(void)
 {
@@ -1046,22 +1043,25 @@ void zmain(void)
 reflectance_start();
 reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
 //SW1_Read(); //button 
-IR_Start();
-IR_flush();
+
 
 for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
         reflectance_digital(&dig); 
-        printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
         vTaskDelay(0);
     if (SW1_Read()== 0)// button press
-    	Go_Stop();
+    {
+        Go_Stop();
+        IR_Start();
+        IR_flush();
     	IR_wait();
+        printf("hi");
 		Go_Stop2 ();
-
+}
     else 
-        motor_start();
+        motor_forward(0,0);
 
     }
 
@@ -1111,6 +1111,7 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
     {
     motor_forward(0,0);
     reflectance_digital(&dig);
+    break;
     }
     
 }
