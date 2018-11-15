@@ -1017,7 +1017,7 @@ for(;;)
         IR_Start();
         IR_flush();
     	IR_wait();
-		Go_Stop2 ();
+		Go_Stop2();
 }
     else 
         motor_forward(0,0);
@@ -1032,24 +1032,18 @@ for(;;)
 void Go_Stop2 (void)
 {
 	int i=0;
-	motor_start();
-	motor_forward(0,0);
-
-	while(1)
+	//motor_start();
+	//motor_forward(0,0);
+	while(i<3)
 	{
 		reflectance_digital(&dig);
-		for(i=0;i>2;)
-		{
-			motor_forward(150,0);
-			if (dig.l3 == 1) && (dig.r3 == 1)
-				i ++;
-			else
-				i=i;
-		}
-		
-        motor_forward(0,0);
-        
+		motor_forward(150,0);
+		if ((dig.l3 == 1) && (dig.r3 == 1))
+				i++;
+		else if (i>2) 
+			motor_forward(0,0);
 	}
+    motor_forward(0,0);
 }
 
 void Go_Stop (void)
