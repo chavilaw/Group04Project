@@ -652,33 +652,32 @@ void zmain(void)
     	if (data.accX < -1000)
     	hit = 0;
     	else  
-    	hit = 1;
-    }
+    	hit = 1
+	    while (hit == 1)
+		{
+			for(i=0;i<=1000;i++)
+	        {
+	        motor_forward(150,1);
+	        }  
+        
+	        int n = rand() %2; // randomly 0 or 1 
+			if (n == 0)
+	        {
+	      		tankturn_left(25,100,500);//tank_turn left
+	  		}
+	 		else 
+	 		{
+	 		 	tankturn_right(100,25,500); //tank_turn right
+	        }        
+		}
 
-	while (hit == 1)
-	{
-		for(i=0;i<=1000;i++)
-        	{
-            motor_forward(150,1);
-        	}  
-        int n = rand() %2; // randomly 0 or 1 
-		if (n == 0)
-        {
-      		tankturn_left(25,100,500);//tank_turn left
-  		}
- 		else 
- 		{
- 		 	tankturn_right(100,25,500); //tank_turn right
-        }        
+	   	if hit == 0
+	   	{
+	   		motor_forward(0,0);
+	   		random_reverse();
+	   		hit = 1;
+	   	}
 	}
-
-   	if (hit == 0)
-   	{
-   		motor_forward(0,0);
-   		random_reverse();
-   		hit = 1;
-   	}
-
 
 }      
       /*  //if(data.accX > -1000 && data.accX<1200) // no obstacle or bump 
