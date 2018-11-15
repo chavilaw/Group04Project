@@ -610,7 +610,7 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 1
+#if 0
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
@@ -662,7 +662,7 @@ void zmain(void)
 	        {
 	        motor_forward(150,1);
 	        LSM303D_Read_Acc(&data);
-	        i++
+	        i++;
 	        }  
         
 	        int n = rand() %2; // randomly 0 or 1 
@@ -680,7 +680,7 @@ void zmain(void)
 	   	{
 	   		motor_forward(0,0);
 	   		random_reverse();
-	   		hit = 1;
+	   		hit = true;
 	   	}
 	}
 
@@ -1084,8 +1084,8 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
-void tankturn_right();
-void tankturn_left();
+void turn_right();
+void turn_left();
 
 
 void zmain(void)
@@ -1107,12 +1107,12 @@ for(;;)
         IR_Start(); // start IR receiving
         IR_flush(); // clear IR receive buffer
    		IR_wait();
+   		Follow_Line_Stop(); //what if here just the  move forward
+   		turn_left();        
    		Follow_Line_Stop();
-   		tankturn_left();
+   		turn_right();
    		Follow_Line_Stop();
-   		tankturn_right();
-   		Follow_Line_Stop();
-   		tankturn_right();
+   		turn_right();
    		Follow_Line_Stop();
     }
     else
@@ -1156,12 +1156,12 @@ void Follow_Line_Stop(void)
 		}
 		else if ((dig.l1 == 0) && (dig.r1 == 1))
 		{
-		tankturn_right(10,50,0);
+		tankturn_right(10,50,1);
 		reflectance_digital(&dig);
 		}
 		else if ((dig.l1 == 1) && (dig.r1 == 0))
 		{
-		tankturn_left(50,10,0);
+		tankturn_left(50,10,1);
 		reflectance_digital(&dig);
 		}
 		else if ((dig.l3 == 1) && (dig.r3 == 1))
@@ -1188,6 +1188,20 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare1(f_speed); 
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
+}
+void turn_right ()
+{
+	do 
+	tankturn_right(50,10,1);
+	while (l1 == 1 && r1 == 1 && l2 == 0 && r2 == 0)
+}
+void turn_left()
+{
+	do 
+	tankturn_left(10,50,1);
+	while (l1 == 1 && r1 == 1 && l2 == 0 && r2 == 0)
+}
+
 }
 
 #endif 
