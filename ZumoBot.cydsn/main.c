@@ -933,11 +933,14 @@ void command();
 #endif
 
 #if 1
+void Go_Stop (void);
+struct sensors_ dig;
+
 void zmain(void)
 {
 
-struct sensors_ ref;
-struct sensors_ dig;
+//struct sensors_ ref;
+
 
 reflectance_start();
 reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
@@ -949,25 +952,37 @@ for(;;)
         reflectance_digital(&dig); 
         printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
         vTaskDelay(0);
-    }
     if (SW1_Read()== 0)// button press
     	Go_Stop();
+    else 
+        motor_start();
 
-
-
+    }
 }
 
-#endif 
 void Go_Stop (void)
 {
+   
 	motor_start();
 	motor_forward(0,0);
-
-if (dig.l3 && dig.r3 == 1)
-	motor_forward(0,0);
-else 
-	motor_forward(150,1);
+    
+while (1)
+{
+    reflectance_digital(&dig);
+while ((dig.l3 == 0) && (dig.r3 == 0))
+   {
+    //reflectance_digital(&dig);	
+    motor_forward(100,0);
+    reflectance_digital(&dig);
+    }
+if ((dig.l3 == 1) && (dig.r3 == 1))
+    {
+    motor_forward(0,0);
+    reflectance_digital(&dig);
+    }
+    
 }
-
+}
+#endif 
  
 /* [] END OF FILE */
