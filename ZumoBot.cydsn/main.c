@@ -610,7 +610,7 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 0
+#if 1
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
@@ -658,9 +658,11 @@ void zmain(void)
     {
        while (hit == true)
 		{
-			for(i=0;i<=1000;i++)
+			while((i<1000) && (data.accX > -1000))
 	        {
 	        motor_forward(150,1);
+	        LSM303D_Read_Acc(&data);
+	        i++
 	        }  
         
 	        int n = rand() %2; // randomly 0 or 1 
