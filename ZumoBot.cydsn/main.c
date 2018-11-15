@@ -1057,7 +1057,6 @@ for(;;)
         IR_Start();
         IR_flush();
     	IR_wait();
-        printf("hi");
 		Go_Stop2 ();
 }
     else 
@@ -1089,6 +1088,7 @@ void Go_Stop2 (void)
 			while (((dig.l3 == 0) && (dig.r3 == 0))||((dig.l3 == 1) && (dig.r3 == 1) && stops<3));
 
         motor_forward(0,0);
+        break;
 	}
 }
 
