@@ -610,7 +610,7 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 1
+#if 0
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
@@ -882,7 +882,7 @@ void command();
 
 #endif
 
-#if 1
+#if 0
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
@@ -987,7 +987,8 @@ void tankturn_left(f_speed, b_speed, delay)
 }
 
 #endif 
-#if 0
+
+#if 1
 
 void Go_Stop (void);
 void Go_Stop2 (void);
@@ -1030,24 +1031,24 @@ for(;;)
 }
 void Go_Stop2 (void)
 {
-	int stops=0;
+	int i=0;
 	motor_start();
 	motor_forward(0,0);
 
 	while(1)
 	{
 		reflectance_digital(&dig);
-		do
+		for(i=0;i>2;)
 		{
 			motor_forward(150,0);
-			if ((dig.l3 == 1) && (dig.r3 == 1))
-				stops = stops ++;
-			else stops;
+			if (dig.l3 == 1) && (dig.r3 == 1)
+				i ++;
+			else
+				i=i;
 		}
-			while (((dig.l3 == 0) && (dig.r3 == 0))||((dig.l3 == 1) && (dig.r3 == 1) && stops<3));
-
+		
         motor_forward(0,0);
-        break;
+        
 	}
 }
 
