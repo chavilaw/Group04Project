@@ -932,17 +932,16 @@ void command();
 #if 1
 void Go_Stop (void);
 struct sensors_ dig;
-void Follow_Line_Stop(void)
-void tankturn_right(f_speed, b_speed, delay)
-void tankturn_left(f_speed, b_speed, delay)
+void Follow_Line_Stop(void);
+void tankturn_right();
+void tankturn_left();
 
 
 void zmain(void)
 {
 reflectance_start();
 reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
-IR_Start(); // start IR receiving
-IR_flush(); // clear IR receive buffer
+
 // void IR_wait(void); //wait for any IR 
 
 for(;;)
@@ -952,9 +951,13 @@ for(;;)
         printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
         vTaskDelay(0);
     if (SW1_Read()== 0)// button press
-    	Go_Stop();
-   		void IR_wait(void);
-   		void Follow_Line_Stop();
+    {
+        Go_Stop();
+        IR_Start(); // start IR receiving
+        IR_flush(); // clear IR receive buffer
+   		IR_wait();
+   		Follow_Line_Stop();
+    }
     else
         motor_forward(0,0);
 
@@ -994,17 +997,17 @@ void Follow_Line_Stop(void)
 			motor_forward(150,0);
 			reflectance_digital(&dig);
 		}
-		if else ((dig.l1 == 1) && (dig.r1 == 0))
+		else if ((dig.l1 == 0) && (dig.r1 == 1))
 		{
-		tankturn_right(25,100,0);
+		tankturn_right(10,50,0);
 		reflectance_digital(&dig);
 		}
-		if else ((dig.l1 == 0) && (dig.r1 == 1))
+		else if ((dig.l1 == 1) && (dig.r1 == 0))
 		{
-		tankturn_left(100,25,0);
+		tankturn_left(50,10,0);
 		reflectance_digital(&dig);
 		}
-		if else ((dig.l3 == 1) && (dig.r3 == 1))
+		else if ((dig.l3 == 1) && (dig.r3 == 1))
     	{
     		motor_forward(0,0);
     		reflectance_digital(&dig);
@@ -1031,7 +1034,7 @@ void tankturn_left(f_speed, b_speed, delay)
 }
 
 #endif 
-#if 1
+#if 0
 
 void Go_Stop (void);
 void Go_Stop2 (void);
