@@ -614,7 +614,7 @@ void tankturn_right(f_speed, b_speed, delay)
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
-bool hit=1;
+bool hit=true;
 void tankturn_right();
 void tankturn_left();
 uint8 speed;
@@ -649,14 +649,14 @@ void zmain(void)
         vTaskDelay(0);
 	    		
     	if (data.accX < -1000)
-    	hit = 0;
+    	hit = false;
     	else  
-    	hit = 1;
+    	hit = true;
    	}
 
     for(;;)
     {
-       while (hit == 1)
+       while (hit == true)
 		{
 			for(i=0;i<=1000;i++)
 	        {
@@ -674,7 +674,7 @@ void zmain(void)
 	        }        
 		}
 
-	   	if (hit == 0)
+	   	if (hit == false)
 	   	{
 	   		motor_forward(0,0);
 	   		random_reverse();
