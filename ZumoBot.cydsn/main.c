@@ -54,6 +54,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
+
 #if 0
 // Hello World!
 void zmain(void)
@@ -609,10 +610,11 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 0
+#if 1
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
+bool hit=1;
 void tankturn_right();
 void tankturn_left();
 uint8 speed;
@@ -623,18 +625,22 @@ void zmain(void)
 {
     struct accData_ data;
     int i=0;
-    bool hit=0;
     printf("Accelerometer test...\n");
 
-    if(!LSM303D_Start()){
+    if(!LSM303D_Start())
+    {
         printf("LSM303D failed to initialize!!! Program is Ending!!!\n");
         vTaskSuspend(NULL);
     }
-    else {
+    else 
+    {
         printf("Device Ok...\n");
     }
+
+
+
     motor_start();              // enable motor controller
-    motor_forward(100,0);    		// moving forward
+    motor_forward(0,0);    		// moving forward
     vTaskDelay(500);
     
     for(;;)
@@ -642,9 +648,33 @@ void zmain(void)
         LSM303D_Read_Acc(&data);
         printf("%8d %8d %8d\n",data.accX, data.accY, data.accZ);
         vTaskDelay(10);
-     
+    	
+    	if data.accX
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    		
+    }
        
-        //if(data.accX > -1000 && data.accX<1200) // no obstacle or bump 
+}      
+      /*  //if(data.accX > -1000 && data.accX<1200) // no obstacle or bump 
         //{ 
             for(i=0;i<=1000;i++)
             {
@@ -657,7 +687,7 @@ void zmain(void)
          	   // motor_forward(0,0); //into forward mode
          	             // go forward
                 }
-            //}
+            }
            // vTaskDelay(100);
          	int n = rand() %2; // randomly 0 or 1
          	
@@ -688,7 +718,7 @@ void zmain(void)
     }
         
      vTaskDelay(10);
-}
+} */
         
 void tankturn_right(f_speed, b_speed, delay)
 {
