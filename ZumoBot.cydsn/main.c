@@ -882,7 +882,7 @@ void command();
 
 #endif
 
-#if 1
+#if 0
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
@@ -988,7 +988,7 @@ void tankturn_left(f_speed, b_speed, delay)
 
 #endif 
 
-#if 1
+#if 0
 
 void Go_Stop (void);
 void Go_Stop2 (void);
@@ -1100,12 +1100,12 @@ for(;;)
         IR_flush(); // clear IR receive buffer
    		IR_wait();
    		Follow_Line_Stop();
-   		tankturn_left();
-   		Follow_Line_Stop();
-   		tankturn_right();
-   		Follow_Line_Stop();
-   		tankturn_right();
-   		Follow_Line_Stop();
+   		tankturn_left(150,25,250);
+   		//Follow_Line_Stop();
+   		//tankturn_right(25,150,100);
+   		//Follow_Line_Stop();
+   		//tankturn_right(25,150,100);
+   		//Follow_Line_Stop();
     }
     else
         motor_forward(0,0);
@@ -1160,6 +1160,7 @@ void Follow_Line_Stop(void)
     	{
     		motor_forward(0,0);
     		reflectance_digital(&dig);
+            break;
     	}
 
 	}
