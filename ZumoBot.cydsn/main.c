@@ -642,18 +642,21 @@ void zmain(void)
     motor_start();              // enable motor controller
     motor_forward(0,0);    		// moving forward
     vTaskDelay(500);
-    
     for(;;)
     {
         LSM303D_Read_Acc(&data);
         printf("%8d %8d %8d\n",data.accX, data.accY, data.accZ);
-        vTaskDelay(10);
-    	
+        vTaskDelay(0);
+	    		
     	if (data.accX < -1000)
     	hit = 0;
     	else  
     	hit = 1;
-	    while (hit == 1)
+  	}
+
+    for(;;)
+    {
+       while (hit == 1)
 		{
 			for(i=0;i<=1000;i++)
 	        {
