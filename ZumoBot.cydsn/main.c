@@ -352,7 +352,7 @@ void blink_O()
 #endif
 
 
-#if 1
+#if 0
 //ultrasonic sensor//
 
 int motorVelocity = 60;
@@ -650,9 +650,9 @@ void zmain(void)
         vTaskDelay(10);
     	
     	if (data.accX < -1000)
-    	hit = 0
+    	hit = 0;
     	else  
-    	hit = 1
+    	hit = 1;
     }
 
 	while (hit == 1)
@@ -672,7 +672,7 @@ void zmain(void)
         }        
 	}
 
-   	if hit == 0
+   	if (hit == 0)
    	{
    		motor_forward(0,0);
    		random_reverse();
