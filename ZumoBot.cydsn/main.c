@@ -614,7 +614,6 @@ void tankturn_right(f_speed, b_speed, delay)
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 int n=0;
-bool hit=true;
 void tankturn_right();
 void tankturn_left();
 uint8 speed;
@@ -625,6 +624,8 @@ void zmain(void)
 {
     struct accData_ data;
     int i=0;
+    int n=0;
+    
     printf("Accelerometer test...\n");
 
     if(!LSM303D_Start())
@@ -637,54 +638,59 @@ void zmain(void)
         printf("Device Ok...\n");
     }
 
-
-
-    motor_start();              // enable motor controller
+	motor_start();              // enable motor controller
     motor_forward(0,0);    		// moving forward
     vTaskDelay(500);
-    while(1)
-    {
-        LSM303D_Read_Acc(&data);
-           		
-    	if (data.accX < -1000)
-    	hit = false;
-    	else  
+while(1)
+{
+	  
+	switch(n)
+	{
 
-    	hit = true;
-   	}
-
-
-    for(;;)
-    {
-       while (hit == true)
-		{
-			while((i<1000) && (data.accX > -1000))
-	        {
-	        motor_forward(150,1);
+	case 0:
+        {
+		LSM303D_Start();
+		if(data.accX < -1000)
+			n= 3;
+            
+		else if((i<1000) && (data.accX > -1000))
+	        { 
 	        LSM303D_Read_Acc(&data);
-	        i++
-	        }  
-        
-	        int n = rand() %2; // randomly 0 or 1 
-			if (n == 0)
-	        {
-	      		tankturn_left(25,100,500);//tank_turn left
-	  		}
-	 		else 
-	 		{
-	 		 	tankturn_right(100,25,500); //tank_turn right
-	        }        
-		}
+	        motor_forward(150,10);
+	        i++;
+	        } 
+		else
+            n = rand()%3;
+            i=0;
+            break;
+        }
+	case 1:
+        {
+		tankturn_right(50,50,250);
+        i=0;
+		LSM303D_Start();
+        n = rand()%3;
+		break;
+        }
+	case 2:
+        {
+		tankturn_left(50,50,250);
+        i=0;
+		LSM303D_Start();
+        n = rand()%3;
+		break;
+        }
+	case 3:
+        {
+		random_reverse();
+		i=0;
+		n=0;
+		break;
+        }
 
-	   	if (hit == false)
-	   	{
-	   		motor_forward(0,0);
-	   		random_reverse();
-	   		hit = 1;
-	   	}
-	}
-
-}  
+	}  
+}
+}
         
 void tankturn_right(f_speed, b_speed, delay)
 {
@@ -704,8 +710,8 @@ void tankturn_left(f_speed, b_speed, delay)
 }
 void random_reverse()
 {    
-            
-  motor_backward(100,2000); // moving backward
+  
+  motor_backward(100,1000); // moving backward
   int n = rand() %2;
   if (n == 0)
   {
@@ -1074,7 +1080,7 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 }
 #endif 
  
-#if 1
+#if 0
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
