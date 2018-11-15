@@ -929,10 +929,13 @@ void command();
 
 #endif
 
-#if 0
+#if 1
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void)
+void tankturn_right(f_speed, b_speed, delay)
+void tankturn_left(f_speed, b_speed, delay)
+
 
 void zmain(void)
 {
@@ -991,14 +994,14 @@ void Follow_Line_Stop(void)
 			motor_forward(150,0);
 			reflectance_digital(&dig);
 		}
-		if else ((dig.l3 == 1) && (dig.r3 == 0))
+		if else ((dig.l1 == 1) && (dig.r1 == 0))
 		{
-		
+		tankturn_right(25,100,0);
 		reflectance_digital(&dig);
 		}
-		if else ((dig.l3 == 0) && (dig.r3 == 1))
+		if else ((dig.l1 == 0) && (dig.r1 == 1))
 		{
-
+		tankturn_left(100,25,0);
 		reflectance_digital(&dig);
 		}
 		if else ((dig.l3 == 1) && (dig.r3 == 1))
