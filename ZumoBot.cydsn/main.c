@@ -610,7 +610,7 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 1
+#if 0
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
 void tankturn_right();
@@ -1005,7 +1005,7 @@ void tankturn_left(f_speed, b_speed, delay)
 
 #endif 
 
-#if 0
+#if 1
 
 void Go_Stop (void);
 void Go_Stop2 (void);
@@ -1026,7 +1026,7 @@ for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
         reflectance_digital(&dig); 
-        //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        //dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3
         vTaskDelay(0);
     if (SW1_Read()== 0)// button press
     {
@@ -1057,8 +1057,10 @@ void Go_Stop2 (void)
 		motor_forward(150,0);
 		if ((dig.l3 == 1) && (dig.r3 == 1))
 				i++;
+			print_mqtt("Zumo006/debug", "Forward value of i: %d", i);
 		else if (i>2) 
 			motor_forward(0,0);
+		print_mqtt("Zumo006/debug", "Stop value of i: %d", i);
 	}
     motor_forward(0,0);
 }
