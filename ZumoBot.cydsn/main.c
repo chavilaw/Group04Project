@@ -1240,4 +1240,110 @@ void turn_left()
 
 #endif 
 
+#if 0
+void Go_Stop (void);
+struct sensors_ dig;
+void Follow_Line_Stop(void);
+void turn_right();
+void turn_left();
+
+
+void zmain(void)
+{
+reflectance_start();
+reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
+
+// void IR_wait(void); //wait for any IR 
+
+for(;;)
+    {
+        // read digital values that are based on threshold. 0 = white, 1 = black
+        reflectance_digital(&dig); 
+        printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        vTaskDelay(0);
+    if (SW1_Read()== 0)// button press
+    {
+        Go_Stop();
+        IR_Start(); // start IR receiving
+        IR_flush(); // clear IR receive buffer
+   		IR_wait();
+   		Follow_Line_Stop(); //what if here just the  move forward
+   		turn_left();        
+   		Follow_Line_Stop();
+   		//tankturn_left(150,25,250);
+   		//Follow_Line_Stop();
+   		//tankturn_right(25,150,100);
+   		//Follow_Line_Stop();
+   		//tankturn_right(25,150,100);
+   		//Follow_Line_Stop();
+   		turn_right();
+   		Follow_Line_Stop();
+   		turn_right();
+   		Follow_Line_Stop();
+    }
+    else
+        motor_forward(0,0);
+
+    }
+}
+
+void Go_Stop (void)
+{
+   
+	motor_start();
+	motor_forward(0,0);
+}
+
+void Follow_Line_Stop(void)
+{
+	while (1)
+	{
+		reflectance_digital(&dig);
+		if ((dig.l1 == 1) && (dig.r1 == 1))
+		{
+			motor_forward(150,0);
+			reflectance_digital(&dig);
+            
+		else if ((dig.l3 == 1) && (dig.r3 == 1))
+    	{
+    		motor_forward(0,0);
+    		reflectance_digital(&dig);
+            break;
+    	}
+
+	}
+}
+
+void tankturn_right(f_speed, b_speed, delay)
+{
+	MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    MotorDirRight_Write(1);     // set RightMotor backward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+}
+void tankturn_left(f_speed, b_speed, delay)
+{
+	MotorDirLeft_Write(1);      // set LeftMotor backward mode
+    MotorDirRight_Write(0);     // set RightMotor forward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+}
+void turn_right ()
+{
+	do 
+	tankturn_right(50,10,1);
+	while (l1 == 1 && r1 == 1 && l2 == 0 && r2 == 0)
+}
+void turn_left()
+{
+	do 
+	tankturn_left(10,50,1);
+	while (l1 == 1 && r1 == 1 && l2 == 0 && r2 == 0)
+}
+
+}
+
+
 /* [] END OF FILE */
