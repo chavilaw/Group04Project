@@ -610,16 +610,15 @@ void tankturn_right(f_speed, b_speed, delay)
 }
 #endif
 
-#if 0
+#if 1
 /* Example of how to use te Accelerometer!!!*/
 void random_reverse();
-int n=0;
 void tankturn_right();
 void tankturn_left();
-uint8 speed;
-uint32 delay;
-uint8 f_speed;
-uint8 b_speed;
+uint8_t speed;
+uint32_t delay;
+uint8_t f_speed;
+uint8_t b_speed;
 void zmain(void)
 {
     struct accData_ data;
@@ -643,53 +642,62 @@ void zmain(void)
     vTaskDelay(500);
 while(1)
 {
-	  
+	
+    
 	switch(n)
 	{
 
 	case 0:
         {
-		LSM303D_Start();
-		if(data.accX < -1000)
-			n= 3;
-            
-		else if((i<1000) && (data.accX > -1000))
-	        { 
-	        LSM303D_Read_Acc(&data);
-	        motor_forward(150,10);
-	        i++;
-	        } 
-		else
-            n = rand()%3;
-            i=0;
+		LSM303D_Read_Acc(&data);
+		print_mqtt("Zumo006/debug","Case 0 value n: %d value i: %d", n, i);
+        if(data.accX < -2000)
+        {
+            n= 3;
+            print_mqtt("Zumo006/debug","Hit in Case 0 value n: %d", n);
             break;
         }
+		else if((i<30) && (data.accX > -2000))
+	        { 
+	        LSM303D_Read_Acc(&data);
+            motor_forward(150,1);
+	        i++;
+            print_mqtt("Zumo006/debug","Forward in Case 0 value n: %d value i: %d", n, i);
+            n=n;
+            } 
+		else
+            {
+           n = rand()%3;
+           break;}
+            }
+        break;
 	case 1:
         {
-		tankturn_right(50,50,250);
+		tankturn_right(100,100,250);
         i=0;
-		LSM303D_Start();
+        print_mqtt("Zumo006/debug","Case 1 value n: %d", n);
         n = rand()%3;
-		break;
+        break;
         }
 	case 2:
         {
-		tankturn_left(50,50,250);
+		tankturn_left(100,100,250);
         i=0;
-		LSM303D_Start();
+	    print_mqtt("Zumo006/debug","Case 2 value n: %d", n);
         n = rand()%3;
 		break;
         }
 	case 3:
         {
 		random_reverse();
+        print_mqtt("Zumo006/debug","Case 3 value n: %d", n);
 		i=0;
 		n=0;
 		break;
         }
 
 	}  
-}
+} 
 }
         
 void tankturn_right(f_speed, b_speed, delay)
@@ -707,6 +715,7 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare1(f_speed); 
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
+    
 }
 void random_reverse()
 {    
