@@ -782,17 +782,17 @@ void zmain(void)
     {
         LSM303D_Read_Acc(&data);
         // send data when we detect a hit and at 10 second intervals
-        if(data.accX > 1500 || ++ctr > 1000) {
-            printf("Acc: %8d %8d %8d\n",data.accX, data.accY, data.accZ);
-            print_mqtt("Zumo01/acc", "%d,%d,%d", data.accX, data.accY, data.accZ);
-            reflectance_read(&ref);
-            printf("Ref: %8d %8d %8d %8d %8d %8d\n", ref.l3, ref.l2, ref.l1, ref.r1, ref.r2, ref.r3);       
-            print_mqtt("Zumo01/ref", "%d,%d,%d,%d,%d,%d", ref.l3, ref.l2, ref.l1, ref.r1, ref.r2, ref.r3);
+        //if(data.accX > 1500 || ++ctr > 1000) {
+            //printf("Acc: %8d %8d %8d\n",data.accX, data.accY, data.accZ);
+            //print_mqtt("Zumo006/acc", "%d,%d,%d", data.accX, data.accY, data.accZ);
+            //reflectance_read(&ref);
+            //printf("Ref: %8d %8d %8d %8d %8d %8d\n", ref.l3, ref.l2, ref.l1, ref.r1, ref.r2, ref.r3);       
+            //print_mqtt("Zumo006/ref", "%d,%d,%d,%d,%d,%d", ref.l3, ref.l2, ref.l1, ref.r1, ref.r2, ref.r3);
             reflectance_digital(&dig);
             printf("Dig: %8d %8d %8d %8d %8d %8d\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);
-            print_mqtt("Zumo01/dig", "%d,%d,%d,%d,%d,%d", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);
+            print_mqtt("Zumo006/dig", "%d,%d,%d,%d,%d,%d", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);
             ctr = 0;
-        }
+        //}
         vTaskDelay(10);
     }
  }   
@@ -1005,7 +1005,7 @@ void tankturn_left(f_speed, b_speed, delay)
 
 #endif 
 
-#if 1
+#if 0
 
 void Go_Stop (void);
 void Go_Stop2 (void);
@@ -1053,15 +1053,28 @@ void Go_Stop2 (void)
 	//motor_forward(0,0);
 	while(i<3)
 	{
-		reflectance_digital(&dig);
-		motor_forward(150,0);
+		print_mqtt("Zumo006/debug", "Start");
 		if ((dig.l3 == 1) && (dig.r3 == 1))
-				i++;
-			print_mqtt("Zumo006/debug", "Forward value of i: %d", i);
-		else if (i>2) 
-			motor_forward(0,0);
+        {
+            print_mqtt("Zumo006/debug", "l3:%d r3: %d",dig.l3, dig.r3);
+            motor_forward(75,1);
+            reflectance_digital(&dig);
+            if ((dig.l3 == 0) && (dig.r3 == 0))
+                {
+                i= i+1;
+		    	print_mqtt("Zumo006/debug", "Forward value of i: %d", i);
+                print_mqtt("Zumo006/debug", "l3:%d r3: %d",dig.l3, dig.r3);
+                motor_forward(75,1);
+                reflectance_digital(&dig);
+                }
+        }
+		/*else 
+		{	
+        motor_forward(0,0);
 		print_mqtt("Zumo006/debug", "Stop value of i: %d", i);
-	}
+	
+        }*/
+    }   
     motor_forward(0,0);
 }
 
