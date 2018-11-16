@@ -900,6 +900,7 @@ void command();
 #endif
 
 #if 0
+    // Assignment 3 week 4
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
@@ -1006,7 +1007,7 @@ void tankturn_left(f_speed, b_speed, delay)
 #endif 
 
 #if 0
-
+//Assignment 1 week 4
 void Go_Stop (void);
 void Go_Stop2 (void);
 struct sensors_ dig;
@@ -1048,32 +1049,27 @@ for(;;)
 }
 void Go_Stop2 (void)
 {
-	int i=0;
+	uint8_t i=0;
+    uint8_t enable=0;
 	//motor_start();
 	//motor_forward(0,0);
 	while(i<3)
 	{
-		print_mqtt("Zumo006/debug", "Start");
-		if ((dig.l3 == 1) && (dig.r3 == 1))
+		//print_mqtt("Zumo006/debug", "Start");
+        
+        reflectance_digital(&dig);
+		if (((dig.l3 == 1) && (dig.r3 == 1))&& enable==1)
         {
-            print_mqtt("Zumo006/debug", "l3:%d r3: %d",dig.l3, dig.r3);
-            motor_forward(75,1);
-            reflectance_digital(&dig);
-            if ((dig.l3 == 0) && (dig.r3 == 0))
-                {
-                i= i+1;
-		    	print_mqtt("Zumo006/debug", "Forward value of i: %d", i);
-                print_mqtt("Zumo006/debug", "l3:%d r3: %d",dig.l3, dig.r3);
-                motor_forward(75,1);
-                reflectance_digital(&dig);
-                }
+         i++;
+            enable=0;
+           
         }
-		/*else 
+		else if(!((dig.l3 == 1) && (dig.r3 == 1))&& enable ==0) 
 		{	
-        motor_forward(0,0);
-		print_mqtt("Zumo006/debug", "Stop value of i: %d", i);
-	
-        }*/
+        enable=1;
+        }
+        else
+        motor_forward(75,1);
     }   
     motor_forward(0,0);
 }
@@ -1105,6 +1101,7 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 #endif 
  
 #if 0
+    //Assignment 2 week 4 OLD??
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
@@ -1240,19 +1237,24 @@ void turn_left()
 
 #endif 
 
-#if 0
+#if 1
+    //Assigment 2 week 4
 void Go_Stop (void);
 struct sensors_ dig;
 void Follow_Line_Stop(void);
 void turn_right();
 void turn_left();
-
+void tankturn_right();
+void tankturn_left();
+uint8_t speed;
+uint32_t delay;
+uint8_t f_speed;
+uint8_t b_speed;
 
 void zmain(void)
 {
 reflectance_start();
 reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
-
 // void IR_wait(void); //wait for any IR 
 
 for(;;)
@@ -1267,19 +1269,21 @@ for(;;)
         IR_Start(); // start IR receiving
         IR_flush(); // clear IR receive buffer
    		IR_wait();
+        motor_forward(100,300);
    		Follow_Line_Stop(); //what if here just the  move forward
-   		turn_left();        
+   		 motor_forward(0,0);
+        turn_left();  
+         motor_forward(0,0);
    		Follow_Line_Stop();
-   		//tankturn_left(150,25,250);
-   		//Follow_Line_Stop();
-   		//tankturn_right(25,150,100);
-   		//Follow_Line_Stop();
-   		//tankturn_right(25,150,100);
-   		//Follow_Line_Stop();
+         motor_forward(0,0);
+  		turn_right();
+         motor_forward(0,0);
+   		Follow_Line_Stop();
+         motor_forward(0,0);
    		turn_right();
+         motor_forward(0,0);
    		Follow_Line_Stop();
-   		turn_right();
-   		Follow_Line_Stop();
+         motor_forward(0,0);
     }
     else
         motor_forward(0,0);
@@ -1292,26 +1296,77 @@ void Go_Stop (void)
    
 	motor_start();
 	motor_forward(0,0);
+    
+while (1)
+{
+    reflectance_digital(&dig);
+while ((dig.l3 == 0) && (dig.r3 == 0))
+   {
+    //reflectance_digital(&dig);	
+    motor_forward(50,0);
+    reflectance_digital(&dig);
+    }
+if ((dig.l3 == 1) && (dig.r3 == 1))
+    {
+    motor_forward(0,0);
+    reflectance_digital(&dig);
+    break;
+    }
+    
+}
 }
 
 void Follow_Line_Stop(void)
 {
-	while (1)
+    int done=0;
+	while (done==0)
 	{
+        
 		reflectance_digital(&dig);
 		if ((dig.l1 == 1) && (dig.r1 == 1))
 		{
-			motor_forward(150,0);
+			motor_forward(75,0);
 			reflectance_digital(&dig);
-            
-		else if ((dig.l3 == 1) && (dig.r3 == 1))
+        }   
+		else if ((dig.l2 == 1) && (dig.r2 == 1))
     	{
     		motor_forward(0,0);
-    		reflectance_digital(&dig);
-            break;
+            done=1;     
+            //break;
     	}
-
+    
 	}
+}
+
+
+void turn_left ()
+{
+	
+	reflectance_digital(&dig);
+	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
+    {
+        reflectance_digital(&dig);
+        tankturn_left(50,50,1);
+        reflectance_digital(&dig);
+        //print_mqtt("Zumo006/debug","Tankturn left. l1: %d r1: %d. l3: %d, r3: %d", dig.l1, dig.r1, dig.l3, dig.r3);
+    }
+     
+}
+void turn_right()
+{
+	reflectance_digital(&dig);
+	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
+    {
+        
+        tankturn_right(50,50,1);
+        reflectance_digital(&dig);
+        reflectance_digital(&dig);
+    }
+     
+    
+       
+        
+    
 }
 
 void tankturn_right(f_speed, b_speed, delay)
@@ -1330,20 +1385,7 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
 }
-void turn_right ()
-{
-	do 
-	tankturn_right(50,10,1);
-	while (l1 == 1 && r1 == 1 && l2 == 0 && r2 == 0)
-}
-void turn_left()
-{
-	do 
-	tankturn_left(10,50,1);
-	while (l1 == 1 && r1 == 1 && l2 == 0 && r2 == 0)
-}
 
-}
-
+#endif 
 
 /* [] END OF FILE */
