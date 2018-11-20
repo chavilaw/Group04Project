@@ -1101,7 +1101,7 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 #endif 
  
 
-#if 1
+#if 0
     //Assigment 2 week 4
 void Go_Stop (void);
 struct sensors_ dig;
@@ -1266,7 +1266,7 @@ void turn_right()
 #define MQTT_CLIENT_ID "Zumo01" 
 
 
-#if 0
+#if 1
 //ultrasonic sensor//
 void random_reverse();
 void tankturn_right();
