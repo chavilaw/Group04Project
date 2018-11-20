@@ -1347,7 +1347,7 @@ void reverse_random_turn1()
     motor_backward(100,2000);
     tankturn_right(100,100,250);
     i=0;
-    print_mqtt("Zumo006/Turn Right", n, ctr, SW1_Read());
+    print_mqtt("Zumo006/Turn Right");
     n = rand()%3;
     break;
 }
@@ -1359,7 +1359,7 @@ void reverse_random_turn2()
     random_reverse();
     tankturn_left(100,100,250);
     i=0;
-    print_mqtt("Zumo006/Turn Left", n, ctr, SW1_Read());
+    print_mqtt("Zumo006/Turn Left");
     n = rand()%3;
     break;
 
