@@ -1100,6 +1100,11 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 }
 #endif 
  
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 9a3d971d326b71346dd9baaefc63b9406e41bdbe
 #if 1
     //Assigment 2 week 4
 void Go_Stop (void);
@@ -1134,19 +1139,19 @@ for(;;)
    		IR_wait();
         motor_forward(100,300);
    		Follow_Line_Stop(); //what if here just the  move forward
-   		 motor_forward(0,0);
+
         turn_left();  
-         motor_forward(0,0);
+
    		Follow_Line_Stop();
-         motor_forward(0,0);
+
   		turn_right();
-         motor_forward(0,0);
+
    		Follow_Line_Stop();
-         motor_forward(0,0);
+
    		turn_right();
-         motor_forward(0,0);
-   		Follow_Line_Stop();
-         motor_forward(0,0);
+
+  		Follow_Line_Stop();
+
     }
     else
         motor_forward(0,0);
