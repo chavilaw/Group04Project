@@ -1101,7 +1101,6 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 #endif 
  
 
-
 #if 1
     //Assigment 2 week 4
 void Go_Stop (void);
@@ -1128,12 +1127,18 @@ for(;;)
         reflectance_digital(&dig); 
         printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
         vTaskDelay(0);
+    
+    
     if (SW1_Read()== 0)// button press
     {
         Go_Stop();
         IR_Start(); // start IR receiving
         IR_flush(); // clear IR receive buffer
    		IR_wait();
+        
+        
+
+        
         motor_forward(100,300);
    		Follow_Line_Stop(); //what if here just the  move forward
 
@@ -1203,37 +1208,6 @@ void Follow_Line_Stop(void)
 	}
 }
 
-
-void turn_left ()
-{
-	
-	reflectance_digital(&dig);
-	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
-    {
-        //reflectance_digital(&dig);
-        tankturn_left(50,50,0);
-        reflectance_digital(&dig);
-        //print_mqtt("Zumo006/debug","Tankturn left. l1: %d r1: %d. l3: %d, r3: %d", dig.l1, dig.r1, dig.l3, dig.r3);
-    }
-     
-}
-void turn_right()
-{
-	reflectance_digital(&dig);
-	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
-    {
-        
-        tankturn_right(50,50,0);
-        //reflectance_digital(&dig);
-        reflectance_digital(&dig);
-    }
-     
-    
-       
-        
-    
-}
-
 void tankturn_right(f_speed, b_speed, delay)
 {
 	MotorDirLeft_Write(0);      // set LeftMotor forward mode
@@ -1250,6 +1224,35 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
 }
+
+
+void turn_left ()
+{
+	
+	reflectance_digital(&dig);
+	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
+    {
+        reflectance_digital(&dig);
+        tankturn_left(25,25,1);
+        reflectance_digital(&dig);
+        //print_mqtt("Zumo006/debug","Tankturn left. l1: %d r1: %d. l3: %d, r3: %d", dig.l1, dig.r1, dig.l3, dig.r3);
+    }
+     
+}
+void turn_right()
+{
+	reflectance_digital(&dig);
+	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
+    {
+        
+        tankturn_right(25,25,1);
+        reflectance_digital(&dig);
+        reflectance_digital(&dig);
+    }
+       
+}
+
+
 
 #endif 
 
