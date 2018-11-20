@@ -1259,6 +1259,118 @@ void turn_right()
 
 #endif 
 
-#endif 
+#define START_MQTT 1
+#define NETWORK_SSID "MY_NETWORK"
+#define NETWORK_PASSWORD "password"
+#define MQTT_BROKER "192.168.1.179" 
+#define MQTT_CLIENT_ID "Zumo01" 
+
+
+#if 0
+//ultrasonic sensor//
+void random_reverse();
+void tankturn_right();
+void tankturn_left();
+uint8_t speed;
+uint32_t delay;
+uint8_t f_speed;
+uint8_t b_speed;
+int motorVelocity = 60;
+void beep_reverse();
+int d = 0; // Print the detected distance (centimeters)
+    
+void zmain(void)
+{
+    int ctr = 0;
+
+    printf("\nBoot\n");
+    send_mqtt("Zumo01/debug", "Boot");
+    
+    
+    Ultra_Start();              // Ultra Sonic Start function
+   
+    motor_start();              // enable motor controller
+    motor_forward(0,0);     // moving forward
+    
+    vTaskDelay(500);
+
+
+for(;;)
+{
+    
+    while(1) {
+        
+        d = Ultra_GetDistance(); // Print the detected distance (centimeters)
+    
+        if(d <= 10) // if the distance is less than 10 cm
+        
+         {
+            motor_forward(0,0);         // set speed to zero to stop motor
+            vTaskDelay(500);
+            reverse_randon_turn1();
+            vTaskDelay(100);
+            
+          }
+        else if (d <= 15)
+        {
+            motor_forward(0,0);         // set speed to zero to stop motor
+            vTaskDelay(500);
+            reverse_randon_turn2();
+            vTaskDelay(100);
+        }
+        
+        else // if the distance is moore than 10 cm
+        
+         {
+            motor_forward(100,0);         // set speed to zero to stop motor
+            vTaskDelay(0);
+         }
+    }
+        
+     vTaskDelay(10);
+}
+}
+        
+void tankturn_right(f_speed, b_speed, delay)
+{
+	MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    MotorDirRight_Write(1);     // set RightMotor backward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+}
+void tankturn_left(f_speed, b_speed, delay)
+{
+	MotorDirLeft_Write(1);      // set LeftMotor backward mode
+    MotorDirRight_Write(0);     // set RightMotor forward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+
+
+void reverse_randon_turn1()
+{
+    motor_backward(100,2000);
+    tankturn_right(100,100,250);
+    i=0;
+    print_mqtt("Zumo006/Turn Right", n, ctr, SW1_Read());
+    n = rand()%3;
+    break;
+}
+    
+
+
+void reverse_randon_turn2()
+{
+    random_reverse();
+    tankturn_left(100,100,250);
+    i=0;
+    print_mqtt("Zumo006/Turn Left", n, ctr, SW1_Read());
+    n = rand()%3;
+    break;
+
+}
+
+#endif
 
 /* [] END OF FILE */
