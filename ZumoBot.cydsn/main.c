@@ -1235,6 +1235,7 @@ void turn_left ()
         reflectance_digital(&dig);
         tankturn_left(25,25,1);
         reflectance_digital(&dig);
+        vTaskDelay(200);
         //print_mqtt("Zumo006/debug","Tankturn left. l1: %d r1: %d. l3: %d, r3: %d", dig.l1, dig.r1, dig.l3, dig.r3);
     }
      
@@ -1248,11 +1249,15 @@ void turn_right()
         tankturn_right(25,25,1);
         reflectance_digital(&dig);
         reflectance_digital(&dig);
+        vvTaskDelay(200);
+
     }
        
 }
 
 
+
+#endif 
 
 #endif 
 
