@@ -1136,19 +1136,19 @@ for(;;)
    		IR_wait();
         motor_forward(100,300);
    		Follow_Line_Stop(); //what if here just the  move forward
-   		 motor_forward(0,0);
+
         turn_left();  
-         motor_forward(0,0);
+
    		Follow_Line_Stop();
-         motor_forward(0,0);
+
   		turn_right();
-         motor_forward(0,0);
+
    		Follow_Line_Stop();
-         motor_forward(0,0);
+
    		turn_right();
-         motor_forward(0,0);
-   		Follow_Line_Stop();
-         motor_forward(0,0);
+
+  		Follow_Line_Stop();
+
     }
     else
         motor_forward(0,0);
