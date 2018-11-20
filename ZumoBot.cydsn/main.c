@@ -1210,8 +1210,8 @@ void turn_left ()
 	reflectance_digital(&dig);
 	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
     {
-        reflectance_digital(&dig);
-        tankturn_left(50,50,1);
+        //reflectance_digital(&dig);
+        tankturn_left(50,50,0);
         reflectance_digital(&dig);
         //print_mqtt("Zumo006/debug","Tankturn left. l1: %d r1: %d. l3: %d, r3: %d", dig.l1, dig.r1, dig.l3, dig.r3);
     }
@@ -1223,8 +1223,8 @@ void turn_right()
 	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
     {
         
-        tankturn_right(50,50,1);
-        reflectance_digital(&dig);
+        tankturn_right(50,50,0);
+        //reflectance_digital(&dig);
         reflectance_digital(&dig);
     }
      
