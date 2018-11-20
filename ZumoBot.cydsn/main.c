@@ -1101,6 +1101,10 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 #endif 
  
 
+<<<<<<< HEAD
+=======
+       
+>>>>>>> fd5070b8afecffd2664e0bba97833c3395fff67b
 #if 0
     //Assigment 2 week 4
 void Go_Stop (void);
@@ -1110,6 +1114,7 @@ void turn_right();
 void turn_left();
 void tankturn_right();
 void tankturn_left();
+void Go_to_White();
 uint8_t speed;
 uint32_t delay;
 uint8_t f_speed;
@@ -1125,35 +1130,30 @@ for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
         reflectance_digital(&dig); 
-        printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
         vTaskDelay(0);
-    
-    
     if (SW1_Read()== 0)// button press
     {
         Go_Stop();
         IR_Start(); // start IR receiving
         IR_flush(); // clear IR receive buffer
    		IR_wait();
-        
-        
-
-        
-        motor_forward(100,300);
+        Go_to_White();
    		Follow_Line_Stop(); //what if here just the  move forward
+        Go_to_White();
+        tankturn_left(100,100,600);  
 
-        turn_left();  
-
+    	Follow_Line_Stop();
+        //Go_to_White();
+  		tankturn_right(100,100,600);
+      
    		Follow_Line_Stop();
-
-  		turn_right();
-
-   		Follow_Line_Stop();
-
-   		turn_right();
-
+        //Go_to_White();
+   		tankturn_right(100,100,600);
+      
   		Follow_Line_Stop();
 
+        motor_forward(0,0);
     }
     else
         motor_forward(0,0);
@@ -1185,26 +1185,52 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
     
 }
 }
+void Go_to_White(void)
+{
+while(1)
+{
+reflectance_digital(&dig);
+    if ((dig.l3 == 0) && (dig.r3 == 0))
+    {
+    motor_forward(0,0);
+    break;
+    }
+    else
+    motor_forward(100,0);
+    vTaskDelay(10);
+}
+
+
+}
 
 void Follow_Line_Stop(void)
 {
-    int done=0;
-	while (done==0)
+	while (1)
 	{
-        
 		reflectance_digital(&dig);
-		if ((dig.l1 == 1) && (dig.r1 == 1))
-		{
-			motor_forward(75,0);
-			reflectance_digital(&dig);
-        }   
-		else if ((dig.l2 == 1) && (dig.r2 == 1))
+		if ((dig.l3 == 1) && (dig.r3 == 1))
     	{
     		motor_forward(0,0);
-            done=1;     
-            //break;
+    	    break;
     	}
-    
+        else if ((dig.l1 == 1) && (dig.r1 == 1))
+		{
+			motor_forward(75,0);
+			//reflectance_digital(&dig);
+		}
+		else if ((dig.l1 == 0) && (dig.r1 == 1))
+		{
+		tankturn_right(75,75,0);
+		//reflectance_digital(&dig);
+		}
+		else if ((dig.l1 == 1) && (dig.r1 == 0))
+		{
+		tankturn_left(75,75,0);
+		//reflectance_digital(&dig);
+		}
+        
+		
+    vTaskDelay(0);
 	}
 }
 
@@ -1215,7 +1241,7 @@ void tankturn_right(f_speed, b_speed, delay)
     PWM_WriteCompare1(f_speed); 
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
-}
+    }
 void tankturn_left(f_speed, b_speed, delay)
 {
 	MotorDirLeft_Write(1);      // set LeftMotor backward mode
@@ -1225,36 +1251,7 @@ void tankturn_left(f_speed, b_speed, delay)
     vTaskDelay(delay);
 }
 
-
-void turn_left ()
-{
-	
-	reflectance_digital(&dig);
-	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
-    {
-        reflectance_digital(&dig);
-        tankturn_left(25,25,1);
-        reflectance_digital(&dig);
-        vTaskDelay(200);
-        //print_mqtt("Zumo006/debug","Tankturn left. l1: %d r1: %d. l3: %d, r3: %d", dig.l1, dig.r1, dig.l3, dig.r3);
-    }
-     
-}
-void turn_right()
-{
-	reflectance_digital(&dig);
-	while (!((dig.l1 == 1 && dig.r1 == 1) && (dig.l2 == 0 && dig.r2 == 0)))
-    {
-        
-        tankturn_right(25,25,1);
-        reflectance_digital(&dig);
-        reflectance_digital(&dig);
-        vvTaskDelay(200);
-
-    }
-       
-}
-
+#endif 
 
 
 #endif 
@@ -1323,6 +1320,7 @@ for(;;)
     }
         
      vTaskDelay(10);
+
 }
 }
         
@@ -1333,7 +1331,7 @@ void tankturn_right(f_speed, b_speed, delay)
     PWM_WriteCompare1(f_speed); 
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
-}
+    }
 void tankturn_left(f_speed, b_speed, delay)
 {
     MotorDirLeft_Write(1);      // set LeftMotor backward mode
@@ -1365,6 +1363,7 @@ void reverse_random_turn2()
     break;
 
 }
+
 
 #endif
 
