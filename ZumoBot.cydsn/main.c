@@ -1259,6 +1259,8 @@ void turn_right()
 
 #endif 
 
+#if 0
+
 #define START_MQTT 1
 #define NETWORK_SSID "MY_NETWORK"
 #define NETWORK_PASSWORD "password"
@@ -1266,7 +1268,6 @@ void turn_right()
 #define MQTT_CLIENT_ID "Zumo01" 
 
 
-#if 0
 //ultrasonic sensor//
 void random_reverse();
 void tankturn_right();
