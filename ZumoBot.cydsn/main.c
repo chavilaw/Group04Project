@@ -1101,10 +1101,6 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 #endif 
  
 
-<<<<<<< HEAD
-=======
-       
->>>>>>> fd5070b8afecffd2664e0bba97833c3395fff67b
 #if 0
     //Assigment 2 week 4
 void Go_Stop (void);
@@ -1254,8 +1250,6 @@ void tankturn_left(f_speed, b_speed, delay)
 #endif 
 
 
-#endif 
-
 #if 0
 
 //ultrasonic sensor_mqtt assigment 2 week 5//
@@ -1363,8 +1357,34 @@ void reverse_random_turn2()
     break;
 
 }
+#endif
 
 
+#if 1
+// Assignment 1 week 5 
+void zmain(void)
+{    
+    RTC_Start(); // start real time clock
+    // set current time
+    RTC_WriteTime(&now); // write the time to real time clock
+
+    for(;;)
+    {
+        if(SW1_Read() == 0) {
+            // read the current time
+            RTC_DisableInt(); /* Disable Interrupt of RTC Component */
+            now = *RTC_ReadTime(); /* copy the current time to a local variable */
+            RTC_EnableInt(); /* Enable Interrupt of RTC Component */
+
+            // print the current time
+            printf("%2d:%02d.%02d\n", now.Hour, now.Min, now.Sec);
+            
+            // wait until button is released
+            while(SW1_Read() == 0) vTaskDelay(50);
+        }
+        vTaskDelay(50);
+    }
+ }   
 #endif
 
 /* [] END OF FILE */
