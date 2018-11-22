@@ -1340,7 +1340,7 @@ void reverse_random_turn1()
     motor_backward(100,2000);
     tankturn_right(100,100,250);
     i=0;
-    print_mqtt("Zumo006/Turn Right");
+    print_mqtt("Zumo006/Turn", "Right");
     n = rand()%3;
     break;
 }
@@ -1352,7 +1352,7 @@ void reverse_random_turn2()
     random_reverse();
     tankturn_left(100,100,250);
     i=0;
-    print_mqtt("Zumo006/Turn Left");
+    print_mqtt("Zumo006/Turn", "Left");
     n = rand()%3;
     break;
 
@@ -1367,6 +1367,10 @@ void zmain(void)
     RTC_Start(); // start real time clock
     // set current time
     RTC_WriteTime(&now); // write the time to real time clock
+    printf("Please enter current time: hours\n");
+    scanf("%d", &now.Hour);
+    printf("Please enter current time: minutes\n");
+    scanf("%d", &now.Min);
 
     for(;;)
     {
@@ -1377,7 +1381,7 @@ void zmain(void)
             RTC_EnableInt(); /* Enable Interrupt of RTC Component */
 
             // print the current time
-            printf("%2d:%02d.%02d\n", now.Hour, now.Min, now.Sec);
+            print_mqtt("Zumo006/Time", "%2d:%02d.\n", now.Hour, now.Min);
             
             // wait until button is released
             while(SW1_Read() == 0) vTaskDelay(50);
