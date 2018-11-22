@@ -1360,7 +1360,7 @@ void reverse_random_turn2()
 #endif
 
 
-#if 1
+#if 0
 // Assignment 1 week 5 
 void zmain(void)
 {    
@@ -1389,6 +1389,90 @@ void zmain(void)
         vTaskDelay(50);
     }
  }   
+#endif
+
+#if 1
+// Assignment 1 week 5 
+
+
+void Go_Stop(void);
+void Follow_Line_Stop(void);
+
+void zmain(void)
+{
+	TickType_t start; 
+	TickType_t end;
+
+
+	Go_Stop(); // Go to the first intersection
+    IR_Start(); // start IR receiving
+    IR_flush(); // clear IR receive buffer
+	IR_wait(); // wait for signal
+	start = xTaskGetTickCount(); //start time
+	Follow_Line_Stop(); // go to the next intersection
+	end = xTaskGetTickCount(); //stop time
+
+	print_mqtt("Zumo006/Time","Elapsed time: %d",  end-start);//time variable
+	
+}
+
+void Go_Stop (void)
+{
+   
+	motor_start();
+	motor_forward(0,0);
+    
+while (1)
+{
+    reflectance_digital(&dig);
+while ((dig.l3 == 0) && (dig.r3 == 0))
+   {
+    //reflectance_digital(&dig);	
+    motor_forward(50,0);
+    reflectance_digital(&dig);
+    }
+if ((dig.l3 == 1) && (dig.r3 == 1))
+    {
+    motor_forward(0,0);
+    reflectance_digital(&dig);
+    break;
+    }
+    
+}
+}
+
+void Follow_Line_Stop(void)
+{
+	while (1)
+	{
+		reflectance_digital(&dig);
+		if ((dig.l3 == 1) && (dig.r3 == 1))
+    	{
+    		motor_forward(0,0);
+    	    break;
+    	}
+        else if ((dig.l1 == 1) && (dig.r1 == 1))
+		{
+			motor_forward(75,0);
+			//reflectance_digital(&dig);
+		}
+		else if ((dig.l1 == 0) && (dig.r1 == 1))
+		{
+		tankturn_right(75,75,0);
+		//reflectance_digital(&dig);
+		}
+		else if ((dig.l1 == 1) && (dig.r1 == 0))
+		{
+		tankturn_left(75,75,0);
+		//reflectance_digital(&dig);
+		}
+        
+		
+    vTaskDelay(0);
+	}
+}
+
+
 #endif
 
 /* [] END OF FILE */
