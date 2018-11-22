@@ -1381,7 +1381,7 @@ void zmain(void)
             RTC_EnableInt(); /* Enable Interrupt of RTC Component */
 
             // print the current time
-            print_mqtt("Zumo006/Time", "%2d:%02d.\n", now.Hour, now.Min);
+            print_mqtt("Zumo006/Time", "%2d:%2d.\n", now.Hour, now.Min);
             
             // wait until button is released
             while(SW1_Read() == 0) vTaskDelay(50);
