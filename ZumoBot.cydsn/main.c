@@ -1250,7 +1250,7 @@ void tankturn_left(f_speed, b_speed, delay)
 #endif 
 
 
-#if 1
+#if 0
 
 //ultrasonic sensor_mqtt assigment 2 week 5//
 
@@ -1293,7 +1293,7 @@ for(;;)
          {
             motor_forward(0,0);         // set speed to zero to stop motor
             vTaskDelay(500);
-            void random_reverse();
+            random_reverse();
             vTaskDelay(100);
             
           }
@@ -1336,11 +1336,15 @@ void random_reverse()
   if (n == 0)
   {
   	tankturn_left(100,25,250);//turn first 
+     printf("\nZumo006/left\n");
+    send_mqtt("Zumo006/left","left");
   //vTaskDelay(1000);
     }
   else 
   	{
   	tankturn_right(25,100,250);
+     printf("\nZumo006/right\n");
+    send_mqtt("Zumo006/right","right");
     //vTaskDelay(1000);
 	}
  } 
@@ -1350,14 +1354,31 @@ void random_reverse()
 #if 0
 // Assignment 1 week 5 
 void zmain(void)
-{    
+{  
+    
     RTC_Start(); // start real time clock
-    // set current time
+    int hour = 0;
+    int min=0;
+    RTC_TIME_DATE now;
+    
+    
+    vTaskDelay(5000);
+    
+    printf("Please enter current time: hours mins");
+    scanf("%d %d", &hour, &min);
+    
+     
+    now.Hour = hour;
+    now.Min = min;
+    now.Sec = 0;
+    now.DayOfMonth = 25;
+    now.Month = 9;
+    now.Year = 2018;
+ 
+   
     RTC_WriteTime(&now); // write the time to real time clock
-    printf("Please enter current time: hours\n");
-    scanf("%d", &now.Hour);
-    printf("Please enter current time: minutes\n");
-    scanf("%d", &now.Min);
+    
+    
 
     for(;;)
     {
@@ -1384,11 +1405,20 @@ void zmain(void)
 
 void Go_Stop(void);
 void Follow_Line_Stop(void);
+struct sensors_ dig;
+void tankturn_right();
+void tankturn_left();
+uint8_t speed;
+uint32_t delay;
+uint8_t f_speed;
+uint8_t b_speed;
 
 void zmain(void)
 {
 	TickType_t start; 
 	TickType_t end;
+    reflectance_start();
+    reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000);
 
 
 	Go_Stop(); // Go to the first intersection
@@ -1400,9 +1430,31 @@ void zmain(void)
 	end = xTaskGetTickCount(); //stop time
 
 	print_mqtt("Zumo006/Time","Elapsed time: %d",  end-start);//time variable
-	
+	for(;;)
+    {
+        // read digital values that are based on threshold. 0 = white, 1 = black
+        reflectance_digital(&dig); 
+        //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        vTaskDelay(0);
+    }
 }
 
+void tankturn_right(f_speed, b_speed, delay)
+{
+    MotorDirLeft_Write(0);      // set LeftMotor forward mode
+    MotorDirRight_Write(1);     // set RightMotor backward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+    }
+void tankturn_left(f_speed, b_speed, delay)
+{
+    MotorDirLeft_Write(1);      // set LeftMotor backward mode
+    MotorDirRight_Write(0);     // set RightMotor forward mode
+    PWM_WriteCompare1(f_speed); 
+    PWM_WriteCompare2(b_speed); 
+    vTaskDelay(delay);
+}
 void Go_Stop (void)
 {
    
