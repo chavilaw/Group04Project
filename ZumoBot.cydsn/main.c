@@ -1250,7 +1250,7 @@ void tankturn_left(f_speed, b_speed, delay)
 #endif 
 
 
-#if 0
+#if 1
 
 //ultrasonic sensor_mqtt assigment 2 week 5//
 
@@ -1267,7 +1267,7 @@ int d = 0; // Print the detected distance (centimeters)
     
 void zmain(void)
 {
-    int ctr = 0;
+    //int ctr = 0;
 
     printf("\nBoot\n");
     send_mqtt("Zumo006/debug", "Boot");
@@ -1293,18 +1293,11 @@ for(;;)
          {
             motor_forward(0,0);         // set speed to zero to stop motor
             vTaskDelay(500);
-            reverse_randon_turn1();
+            void random_reverse();
             vTaskDelay(100);
             
           }
-        else if (d <= 15)
-        {
-            motor_forward(0,0);         // set speed to zero to stop motor
-            vTaskDelay(500);
-            reverse_randon_turn2();
-            vTaskDelay(100);
-        }
-        
+              
         else // if the distance is moore than 10 cm
         
          {
@@ -1333,34 +1326,28 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare1(f_speed); 
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
-
-
-void reverse_random_turn1()
-{
-    motor_backward(100,2000);
-    tankturn_right(100,100,250);
-    i=0;
-    print_mqtt("Zumo006/Turn", "Right");
-    n = rand()%3;
-    break;
 }
-    
 
-
-void reverse_random_turn2()
-{
-    random_reverse();
-    tankturn_left(100,100,250);
-    i=0;
-    print_mqtt("Zumo006/Turn", "Left");
-    n = rand()%3;
-    break;
-
-}
+void random_reverse()
+{    
+  
+  motor_backward(100,1000); // moving backward
+  int n = rand() %2;
+  if (n == 0)
+  {
+  	tankturn_left(100,25,250);//turn first 
+  //vTaskDelay(1000);
+    }
+  else 
+  	{
+  	tankturn_right(25,100,250);
+    //vTaskDelay(1000);
+	}
+ } 
 #endif
 
 
-#if 1
+#if 0
 // Assignment 1 week 5 
 void zmain(void)
 {    
