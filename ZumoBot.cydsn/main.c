@@ -1420,16 +1420,17 @@ void zmain(void)
     reflectance_start();
     reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000);
 
-
-	Go_Stop(); // Go to the first intersection
+if(SW1_Read() == 0) {
+	
+	Follow_Line_Stop(); // Go to the first intersection
     IR_Start(); // start IR receiving
     IR_flush(); // clear IR receive buffer
 	IR_wait(); // wait for signal
 	start = xTaskGetTickCount(); //start time
 	Follow_Line_Stop(); // go to the next intersection
 	end = xTaskGetTickCount(); //stop time
-
 	print_mqtt("Zumo006/Time","Elapsed time: %d",  end-start);//time variable
+	}
 	for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
