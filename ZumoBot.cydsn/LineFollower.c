@@ -1,6 +1,27 @@
 #if 1
+    
+#include <project.h>
+#include <stdio.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "Motor.h"
+#include "Ultra.h"
+#include "Nunchuk.h"
+#include "Reflectance.h"
+#include "Gyro.h"
+#include "Accel_magnet.h"
+#include "LSM303D.h"
+#include "IR.h"
+#include "Beep.h"
+#include "mqtt_sender.h"
+#include <time.h>
+#include <sys/time.h>
+#include "serial1.h"
+#include <unistd.h>
+#include <stdlib.h>
+
 void Go_Stop (void);
-struct sensors_ dig;
+struct sensors_dig;
 void Follow_Line_Stop(void);
 void tankturn_right();
 void tankturn_left();
