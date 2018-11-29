@@ -1336,22 +1336,20 @@ void random_reverse()
   if (n == 0)
   {
   	tankturn_left(100,25,250);//turn first 
-    // printf("\nZumo006/left\n");
     print_mqtt("Zumo006/turn","left");
-  //vTaskDelay(1000);
+  
     }
   else 
   	{
   	tankturn_right(25,100,250);
-     //printf("\nZumo006/right\n");
     print_mqtt("Zumo006/turn","right");
-    //vTaskDelay(1000);
+    
 	}
  } 
 #endif
 
 
-#if 0
+#if 1
 // Assignment 1 week 5 
 void zmain(void)
 {  
@@ -1364,15 +1362,15 @@ void zmain(void)
     
     vTaskDelay(5000);
     
-    printf("Please enter current time: hours mins");
+    printf("Please enter current time: hours mins\n");
     scanf("%d %d", &hour, &min);
     
      
     now.Hour = hour;
     now.Min = min;
     now.Sec = 0;
-    now.DayOfMonth = 25;
-    now.Month = 9;
+    now.DayOfMonth = 22;
+    now.Month = 11;
     now.Year = 2018;
  
    
@@ -1389,7 +1387,7 @@ void zmain(void)
             RTC_EnableInt(); /* Enable Interrupt of RTC Component */
 
             // print the current time
-            print_mqtt("Zumo006/Time", "%2d:%2d.\n", now.Hour, now.Min);
+            print_mqtt("Zumo006/Time", "%2d:%2d.", now.Hour, now.Min);
             
             // wait until button is released
             while(SW1_Read() == 0) vTaskDelay(50);
@@ -1399,7 +1397,7 @@ void zmain(void)
  }   
 #endif
 
-#if 1
+#if 0
 // Assignment 1 week 5 
 
 
