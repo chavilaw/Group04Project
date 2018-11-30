@@ -1,4 +1,4 @@
-#if 0
+#if 1
     // zumo wrestling
 void Go_Stop (void);
 struct sensors_ dig;
