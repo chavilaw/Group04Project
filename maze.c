@@ -13,7 +13,6 @@ uint8_t b_speed;
 int d = 0; // Print the detected distance (centimeters)
 
 
-ready,start=will print again when it starts moving again,stop,time=start to finnish//
 
 
 void_zmain(void)
@@ -46,7 +45,6 @@ void_zmain(void)
            IR_Start(); // start IR receiving
            IR_flush(); // clear IR receive buffer
            IR_wait();
-           Start_moving();
            ultrasonic();
         }
         else
@@ -58,18 +56,59 @@ void_zmain(void)
 
 
 
+void Start_moving(void) //get to the starting line
+{
+   
+        motor_start();
+        motor_forward(0,0);
+        print_mqtt("Zumo006/ready","%d");
+    
+    while (1)
+    {
+        reflectance_digital(&dig);
+
+    while ((dig.l3 == 0) && (dig.r3 == 0))
+    {
+        motor_forward(100,0);
+        reflectance_digital(&dig);
+        print_mqtt("Zumo006/line");
+    }
+    
+   
+    if ((dig.l3 == 1) && (dig.r3 == 1))
+    {
+        motor_forward(0,0)
+        reflectance_digital(&dig);
+        print_mqtt("Zumo006/stop","%d");
+        print_mqtt("Zumo006/time","%d");
+        break;
+    }
+
+   }
+
+
+
+
 
 void ultrasonic(void)
 
-while 
-
+do
 {
-        
-    d = Ultra_GetDistance(); // Print the detected distance (centimeters)
-    
-    if(d <= 13) // if the distance is less than 13 cm
-        
+    Follow_line();
+
+
+    while 
+
     {
+        
+    
+        d = Ultra_GetDistance(); // Print the detected distance (centimeters)
+    
+    
+        if(d <= 13) // if the distance is less than 13 cm
+        
+   
+        {
             motor_forward(0,0);         // stop motor
             print_mqtt("Zumo006/stop","%d");
 
@@ -85,68 +124,14 @@ while
             }
             vTaskDelay(100);
             
-     }
-              
-    else // if the distance is moore than 10 cm
-    {
-            Follow_line();
-            vTaskDelay(0);
+       }
+        
     }
+    
 }
     
-    
 
 
-
-void Start_moving(void) //get to the starting line
-{
-   
-    motor_start();
-    motor_forward(0,0);
-    print_mqtt("Zumo006/ready","%d");
-    
-while (1)
-{
-    reflectance_digital(&dig);
-
-while ((dig.l3 == 0) && (dig.r3 == 0))
-{
-    motor_forward(100,0);
-    reflectance_digital(&dig);
-    print_mqtt("Zumo006/line");
-}
-    
-if ((dig.l3 == 1) && (dig.r3 == 1))
-{
-    motor_forward(0,0)
-    reflectance_digital(&dig);
-    print_mqtt("Zumo006/stop","%d");
-    print_mqtt("Zumo006/time","%d");
-    break;
-}
-}
-
-
-
-
-
-void Go_to_White(void) //for the ending
-{
-while(1)
-{
-reflectance_digital(&dig);
-    if ((dig.l3 == 0) && (dig.r3 == 0))
-    {
-        motor_forward(0,0);
-        print_mqtt("Zumo006/stop","%d");
-        break;
-    }
-    else
-    {
-        motor_forward(100,0);
-        vTaskDelay(10);
-    }
-}
 
 
 }
@@ -157,30 +142,39 @@ void Follow_line(void)
 	{
 		reflectance_digital(&dig);
         
-		if ((dig.l3 == 1) && (dig.r3 == 1))
+		
+        if ((dig.l1 == 1) && (dig.r1 == 1))
     	{
-    		motor_forward(0,0);
+    		motor_forward(75,0);
             print_mqtt("Zumo006/Start","%d")
     	    break;
     	}
-        else if ((dig.l1 == 1) && (dig.r1 == 1))
-		{
-			motor_forward(75,0);
-		}
-		else if ((dig.l1 == 0) && (dig.r1 == 1))
+		
+        else if ((dig.l1 == 0) && (dig.r1 == 1))
 		{
 		    tankturn_right(75,75,0);
 		}
-		else if ((dig.l1 == 1) && (dig.r1 == 0))
+		
+        else if ((dig.l1 == 1) && (dig.r1 == 0))
 		{
 		    tankturn_left(75,75,0);
 		}
         
-		
-    vTaskDelay(0);
+        else if ((dig.l1 == 0) && (dig.r1 == 0))
+        { 
+            
+            motor_forward(0,0);
+            print_mqtt("Zumo006/stop","%d");
+            print_mqtt("Zumo006/time","%d");
+            break;
+        
+        }
+        
+        vTaskDelay(0);
 	}
 }
     
+
     
 
 void tankturn_right(f_speed, b_speed, delay)
