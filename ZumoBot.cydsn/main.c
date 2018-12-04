@@ -224,7 +224,7 @@ reflectance_digital(&dig);
 }
 #endif
 
-#if 0
+#if 1
 //Task 2 linefollower
 
 void Go_Stop ();
@@ -233,6 +233,7 @@ struct sensors_ dig;
 void Follow_Line_Stop();
 void tankturn_right();
 void tankturn_left();
+void Go_Stop2 ();
 uint8_t speed;
 uint32_t delay;
 uint8_t f_speed;
@@ -255,17 +256,17 @@ for(;;)
     if (SW1_Read()== 0)// button press
     {
         Go_Stop(); //start  and go to the first black line
-        print_mqtt("Zumo006/ready", "line"); // MQTT send ready to start
+        print_mqtt("Zumo045/ready", "line"); // MQTT send ready to start
         IR_Start(); // start IR receiving
         IR_flush(); // clear IR receive buffer
         IR_wait(); // wait for the IR signal to start
         start = xTaskGetTickCount(); //start time
-        print_mqtt("Zumo006/start", "%d", start); // Send MQTT time
+        print_mqtt("Zumo045/start", "%d", start); // Send MQTT time
         Go_to_White(); // go away from the first black line  to start  the line following
    		Follow_Line_Stop(); // go and follow the line and  stop  on the second black line
         end = xTaskGetTickCount(); //stop time
-        print_mqtt("Zumo006/stop", "%d", end); // MQTT end time
-        print_mqtt("Zumo006/time", "%d", end-start); // MQTT endd - start time
+        print_mqtt("Zumo045/stop", "%d", end); // MQTT end time
+        print_mqtt("Zumo045/time", "%d", end-start); // MQTT endd - start time
     }
     else
         motor_forward(0,0);
@@ -323,19 +324,12 @@ void Follow_Line_Stop(void)
     while (1)
     {
         reflectance_digital(&dig);
-        if (((dig.l3 == 1) && (dig.r3 == 1)) && enable == 0)
+        if ((dig.l3 == 1) && (dig.r3 == 1)) 
         {
-            motor_forward(50,0);
-            //then go to white 
-            if ((dig.l3 == 0) && (dig.r3 == 0))
-                {
-                    enable = 1;
-                }
-        }  
-         else  if (((dig.l3 == 1) && (dig.r3 == 1)) && enable == 1)
-        {
-            motor_forward(0,0);
-            break;
+            
+            Go_Stop2();
+            
+            
         }
         else if ((dig.l1 == 1) && (dig.r1 == 1))
         {
@@ -372,16 +366,43 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
 }
+void Go_Stop2 (void)
+{
+    uint8_t i=0;
+    uint8_t enable=0;
+    //motor_start();
+    //motor_forward(0,0);
+    while(i<2)
+    {
+        //print_mqtt("Zumo006/debug", "Start");
+        
+        reflectance_digital(&dig);
+        if (((dig.l3 == 1) && (dig.r3 == 1))&& enable==1)
+        {
+         i++;
+            enable=0;
+           
+        }
+        else if(!((dig.l3 == 1) && (dig.r3 == 1))&& enable ==0)
+        {    
+        enable=1;
+        }
+        else
+        motor_forward(75,1);
+    }   
+    motor_forward(0,0);
+}
 
 
 #endif 
 
 #if 0
+    
 //this is the maze one//
 void Go_forward (void);
 void Follow_line(void);
 void ultrasonic(void);
-void Go_to_White(void);
+void Start_moving(void);
 struct sensors_ dig;
 void tankturn_right();
 void tankturn_left();
@@ -390,13 +411,15 @@ uint32_t delay;
 uint8_t f_speed;
 uint8_t b_speed;
 int d = 0; // Print the detected distance (centimeters)
+void Maze_Runner();
+void Avoid_obstacle();
+void Go_to_White();
+void Go_Stop();
 
 
 
 
-void_zmain(void)
-    
-    
+void zmain(void)
 {
     
     TickType_t start_time, stop_time, execution_time, hit_time;
@@ -410,27 +433,31 @@ void_zmain(void)
     motor_start();              // enable motor controller
     motor_forward(0,0);     // moving forward
     
-    vTaskDelay(500);
+    //vTaskDelay(500);
 
 
 
     for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
-        reflectance_digital(&dig);
-        printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
-        vTaskDelay(0);
+        //reflectance_digital(&dig);
+        //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
+        //vTaskDelay(0);
     
     
         if (SW1_Read()== 0)// button press
         {
-           start_time = xTaskGetTickCount( );
-   		   print_mqtt("Zumo045/start","%d",start_time);
-           Start_moving();
-           IR_Start(); // start IR receiving
+          
+           Go_Stop();
+           print_mqtt("Zumo045/ready","%d");
+           IR_Start(); // start IR receiving 
            IR_flush(); // clear IR receive buffer
            IR_wait();
-           ultrasonic();
+           start_time = xTaskGetTickCount( );
+   		   print_mqtt("Zumo045/start","%d",start_time);
+   		   Maze_Runner();
+           
+
         }
         else
         {
@@ -439,68 +466,123 @@ void_zmain(void)
         }
      }
 
+}
 
-
-void Start_moving(void) //get to the starting line
+void Go_Stop (void)
 {
    
-        motor_start();
-        motor_forward(0,0);
-        print_mqtt("Zumo045/ready","%d");
+    motor_start();
+    motor_forward(0,0);
     
-    while (1)
+while (1)
+{
+    reflectance_digital(&dig);
+while ((dig.l3 == 0) && (dig.r3 == 0))
+   {
+    motor_forward(50,0);
+    reflectance_digital(&dig);
+    }
+if ((dig.l3 == 1) && (dig.r3 == 1))
     {
-        reflectance_digital(&dig);
-
-    while ((dig.l3 == 0) && (dig.r3 == 0))
-    {
-        motor_forward(100,0);
-        reflectance_digital(&dig);
-        print_mqtt("Zumo045/line");
+    motor_forward(0,0);
+    reflectance_digital(&dig);
+    break;
     }
     
-   
-    if ((dig.l3 == 1) && (dig.r3 == 1))
+}
+}
+
+void Maze_Runner(void)
+{
+	int obstacle=1;
+	int d;
+	
+    while(1)
     {
-        motor_forward(0,0)
-        reflectance_digital(&dig);
-        stop_time = xTaskGetTickCount( );
-   	    print_mqtt("Zumo045/stop","%d",stop_time);
-        execution_time = stop_time - start_time;
-   	    print_mqtt("Zumo045/time","%d",execution_time);
-        break;
+    reflectance_digital(&dig);
+    d = Ultra_GetDistance();
+    
+    if (((dig.l1 == 1) && (dig.r1 == 1)) && (obstacle == 1))
+    {
+	    Go_to_White();
+        Follow_line();
     }
+    else if ((dig.l3 == 1) && (dig.r3 == 1))
+	{
+	motor_forward(0,0);
+	    if(d < 13)
+	    {
+            obstacle = 0;
+	    }
+        else 
+            obstacle = 1;
+        
+    }
+    else if (obstacle == 0)
+    {
+	    Avoid_obstacle();
+    }
+    
+    }
+}
 
-   }
+void Avoid_obstacle(void)
+{
+	// tankturn right
+	tankturn_right(75,75,250);
+	// 2 x follow line and stop after the black line
+	//Follow_line();
+	//Go_to_White();
+	//Follow_line();
+	// tankturn left
+	//tankturn_left(150,150,250);
+	// 3 x follow line and stop after the black line
+	//Follow_line();
+	//Go_to_White();
+	//Follow_line();
+	//Go_to_White();
+	//Follow_line();
+	// tankturn left
+	//tankturn_left(150,150,250);
+	// 2 x follow line and stop after the black line
+	//Follow_line();
+	//Go_to_White();
+	//Follow_line();
 
-
-
-
+}
+ 
+ void Go_to_White(void)
+{
+while(1)
+{
+reflectance_digital(&dig);
+    if ((dig.l3 == 0) && (dig.r3 == 0))
+    {
+    motor_forward(0,0);
+    break;
+    }
+    else
+    motor_forward(100,0);
+    vTaskDelay(10);
+}
+}
 
 void ultrasonic(void)
-
-do
 {
-    Follow_line();
-
-
-    while 
-
+    TickType_t start_time, stop_time, execution_time, hit_time;
+    do{
+        Follow_line();
+    }
+    while(1);
     {
-        
-    
         d = Ultra_GetDistance(); // Print the detected distance (centimeters)
-    
-    
         if(d <= 13) // if the distance is less than 13 cm
-        
-   
-        {
+       {
             motor_forward(0,0);         // stop motor
             stop_time = xTaskGetTickCount( );
    	        print_mqtt("Zumo045/stop","%d",stop_time);
+            //vTaskDelay(500);
 
-            vTaskDelay(500);
             int n = rand() %2;
             if (n == 0)
             {
@@ -510,33 +592,33 @@ do
   	        {
   	           tankturn_right(25,100,250);
             }
-            vTaskDelay(100);
+            //vTaskDelay(100);
             
        }
         
     }
     
 }
-    
 
-
-
-
-}
 
 void Follow_line(void)
 {
-	while (1)
+	    
+    while (1)
 	{
 		reflectance_digital(&dig);
         
+        if ((dig.l3 == 1) && (dig.r3 == 1))
+        { 
+            
+            motor_forward(0,0);
+            break;
+        
+        }
 		
-        if ((dig.l1 == 1) && (dig.r1 == 1))
+        else if ((dig.l1 == 1) && (dig.r1 == 1))
     	{
     		motor_forward(75,0);
-            start_time = xTaskGetTickCount( );
-   		    print_mqtt("Zumo045/start","%d",start_time);
-    	    break;
     	}
 		
         else if ((dig.l1 == 0) && (dig.r1 == 1))
@@ -549,17 +631,7 @@ void Follow_line(void)
 		    tankturn_left(75,75,0);
 		}
         
-        else if ((dig.l1 == 0) && (dig.r1 == 0))
-        { 
-            
-            motor_forward(0,0);
-            stop_time = xTaskGetTickCount( );
-   	        print_mqtt("Zumo045/stop","%d",stop_time);
-            execution_time = stop_time - start_time;
-   	        print_mqtt("Zumo045/time","%d",execution_time);
-            break;
         
-        }
         
         vTaskDelay(0);
 	}
@@ -593,6 +665,6 @@ void tankturn_left(f_speed, b_speed, delay)
 
 
 
-#end if
+#endif
 
 /* [] END OF FILE */
