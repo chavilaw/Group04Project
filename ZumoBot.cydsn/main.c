@@ -217,6 +217,7 @@ reflectance_digital(&dig);
 #endif
 
 #if 1
+//Task 2 linefollower
 
 void Go_Stop ();
 void Go_to_White();
@@ -314,20 +315,20 @@ void Follow_Line_Stop(void)
     while (1)
     {
         reflectance_digital(&dig);
-        if ((dig.l3 == 1) && (dig.r3 == 1)) 
+        if (((dig.l3 == 1) && (dig.r3 == 1)) && enable == 0)
         {
             motor_forward(50,0);
-            
-            reflectance_digital(&dig);
+            //then go to white 
             if ((dig.l3 == 0) && (dig.r3 == 0))
-            {
-            enable = 1;
-            motor_forward(50,0);
-            }
-            else if (((dig.l3 == 1) && (dig.r3 == 1))&& enable ==1)
+                {
+                    enable = 1;
+                }
+        }  
+         else  if (((dig.l3 == 1) && (dig.r3 == 1)) && enable == 1)
+        {
             motor_forward(0,0);
             break;
-            }
+        }
         else if ((dig.l1 == 1) && (dig.r1 == 1))
         {
             motor_forward(75,0);
