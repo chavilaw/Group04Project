@@ -404,7 +404,7 @@ void_zmain(void)
     reflectance_start();
 
     reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); 
-    print_mqtt("Zumo006/ready","maze");
+    print_mqtt("Zumo045/ready","maze");
     
     motor_start();              // enable motor controller
     motor_forward(0,0);     // moving forward
@@ -424,7 +424,7 @@ void_zmain(void)
         if (SW1_Read()== 0)// button press
         {
            start_time = xTaskGetTickCount( );
-   		   print_mqtt("Zumo006/start","%d",start_time);
+   		   print_mqtt("Zumo045/start","%d",start_time);
            Start_moving();
            IR_Start(); // start IR receiving
            IR_flush(); // clear IR receive buffer
@@ -445,7 +445,7 @@ void Start_moving(void) //get to the starting line
    
         motor_start();
         motor_forward(0,0);
-        print_mqtt("Zumo006/ready","%d");
+        print_mqtt("Zumo045/ready","%d");
     
     while (1)
     {
@@ -455,7 +455,7 @@ void Start_moving(void) //get to the starting line
     {
         motor_forward(100,0);
         reflectance_digital(&dig);
-        print_mqtt("Zumo006/line");
+        print_mqtt("Zumo045/line");
     }
     
    
@@ -464,9 +464,9 @@ void Start_moving(void) //get to the starting line
         motor_forward(0,0)
         reflectance_digital(&dig);
         stop_time = xTaskGetTickCount( );
-   	    print_mqtt("Zumo006/stop","%d",stop_time);
+   	    print_mqtt("Zumo045/stop","%d",stop_time);
         execution_time = stop_time - start_time;
-   	    print_mqtt("Zumo006/time","%d",execution_time);
+   	    print_mqtt("Zumo045/time","%d",execution_time);
         break;
     }
 
@@ -497,7 +497,7 @@ do
         {
             motor_forward(0,0);         // stop motor
             stop_time = xTaskGetTickCount( );
-   	        print_mqtt("Zumo006/stop","%d",stop_time);
+   	        print_mqtt("Zumo045/stop","%d",stop_time);
 
             vTaskDelay(500);
             int n = rand() %2;
@@ -534,7 +534,7 @@ void Follow_line(void)
     	{
     		motor_forward(75,0);
             start_time = xTaskGetTickCount( );
-   		    print_mqtt("Zumo006/start","%d",start_time);
+   		    print_mqtt("Zumo045/start","%d",start_time);
     	    break;
     	}
 		
@@ -553,9 +553,9 @@ void Follow_line(void)
             
             motor_forward(0,0);
             stop_time = xTaskGetTickCount( );
-   	        print_mqtt("Zumo006/stop","%d",stop_time);
+   	        print_mqtt("Zumo045/stop","%d",stop_time);
             execution_time = stop_time - start_time;
-   	        print_mqtt("Zumo006/time","%d",execution_time);
+   	        print_mqtt("Zumo045/time","%d",execution_time);
             break;
         
         }
