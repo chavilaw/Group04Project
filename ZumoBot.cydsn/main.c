@@ -54,8 +54,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
-
-#if 1
+#if 0
     // zumo wrestling task 1
 void Go_Stop (void);
 void Stay_in_Circle (void);
@@ -89,21 +88,22 @@ void zmain(void)
        if (SW1_Read()== 0)// button press
         {
             Go_Stop();
-            print_mqtt("Zumo006/zumo","ready");
+            print_mqtt("Zumo045/zumo","ready");
             IR_Start(); // start IR receiving
             IR_flush(); // clear IR receive buffer
    		    IR_wait();
    		    start_time = xTaskGetTickCount( );
-   		    print_mqtt("Zumo006/start","%d",start_time);
+   		    print_mqtt("Zumo045/start","%d",start_time);
             Go_to_White();
 			Stay_in_Circle ();
 			if (SW1_Read()== 0)// button press	
 			{
+                motor_forward(0,0);
 				stop_time = xTaskGetTickCount( );
-   		    	print_mqtt("Zumo006/stop","%d",stop_time);
+   		    	print_mqtt("Zumo045/stop","%d",stop_time);
 
    		    	execution_time = stop_time - start_time;
-   		    	print_mqtt("Zumo006/time","%d",execution_time);
+   		    	print_mqtt("Zumo045/time","%d",execution_time);
 			}
 
    		    
@@ -147,28 +147,29 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
 	{
        LSM303D_Read_Acc(&data);
 	   reflectance_digital(&dig);
-       while ((dig.l3 == 0) && (dig.r3 == 0))
-       {   
-           motor_forward(200,0);
-           reflectance_digital(&dig);
-            if(data.accX < -4000 || data.accX > 4000)
-            {
-                hit_time = xTaskGetTickCount( );
-                print_mqtt("Zumo006/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
-            } 
-            
-        }
-       if ((dig.l1 == 1) && (dig.r1 == 1))
+       if ((dig.l1 == 1) || (dig.r1 == 1))
        {
             motor_forward(0,0);
             reflectance_digital(&dig);
             random_reverse();
-            if(data.accX < -4000 || data.accX > 4000)
+            if(data.accX < -5000 || data.accX > 5000)
             {
                 hit_time = xTaskGetTickCount( );
-                print_mqtt("Zumo006/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
+                print_mqtt("Zumo045/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
             }   
+        }     
+        else if ((dig.l3 == 0) && (dig.r3 == 0))
+       {   
+           motor_forward(200,0);
+           reflectance_digital(&dig);
+            if(data.accX < -5000 || data.accX > 5000)
+            {
+                hit_time = xTaskGetTickCount( );
+                print_mqtt("Zumo045/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
+            } 
+            
         }
+
     	
 	}
 	
@@ -176,7 +177,7 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
 void random_reverse()
 {    
   
-  motor_backward(100,1000); // moving backward
+  motor_backward(100,1500); // moving backward
   int n = rand() %2;
   if (n == 0)
   {
