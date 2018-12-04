@@ -1,17 +1,9 @@
 #if 1
-<<<<<<< HEAD
-    
 
-
-void Go_Stop (void);
-struct sensors_dig;
-void Follow_Line_Stop(void);
-=======
 void Go_Stop ();
 void Go_to_White();
 struct sensors_ dig;
 void Follow_Line_Stop();
->>>>>>> 83422b286611c45f740e508ca2f8237346ba3b97
 void tankturn_right();
 void tankturn_left();
 uint8_t speed;
@@ -79,6 +71,7 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
     
 }
 }
+
 void Go_to_White(void)
 {
 while(1)
@@ -93,9 +86,8 @@ reflectance_digital(&dig);
     motor_forward(100,0);
     vTaskDelay(10);
 }
-
-
 }
+
 
 void Follow_Line_Stop(void)
 {
@@ -106,10 +98,14 @@ void Follow_Line_Stop(void)
         reflectance_digital(&dig);
         if (((dig.l3 == 1) && (dig.r3 == 1)) && enable == 0)
         {
-            enable = 1;
             motor_forward(50,0);
+            //then go to white 
+            if ((dig.l3 == 0) && (dig.r3 == 0))
+                {
+                    enable = 1;
+                }
         }
-        else  if (((dig.l3 == 1) && (dig.r3 == 1)) && enable== 1)
+        else  if (((dig.l3 == 1) && (dig.r3 == 1)) && enable == 1)
         {
             motor_forward(0,0);
             break;
