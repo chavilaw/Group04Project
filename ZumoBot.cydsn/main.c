@@ -89,21 +89,21 @@ void zmain(void)
        if (SW1_Read()== 0)// button press
         {
             Go_Stop();
-            print_mqtt("Zumo006/zumo","ready");
+            print_mqtt("Zumo045/zumo","ready");
             IR_Start(); // start IR receiving
             IR_flush(); // clear IR receive buffer
    		    IR_wait();
    		    start_time = xTaskGetTickCount( );
-   		    print_mqtt("Zumo006/start","%d",start_time);
+   		    print_mqtt("Zumo045/start","%d",start_time);
             Go_to_White();
 			Stay_in_Circle ();
 			if (SW1_Read()== 0)// button press	
 			{
 				stop_time = xTaskGetTickCount( );
-   		    	print_mqtt("Zumo006/stop","%d",stop_time);
+   		    	print_mqtt("Zumo045/stop","%d",stop_time);
 
    		    	execution_time = stop_time - start_time;
-   		    	print_mqtt("Zumo006/time","%d",execution_time);
+   		    	print_mqtt("Zumo045/time","%d",execution_time);
 			}
 
    		    
