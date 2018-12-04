@@ -1,17 +1,9 @@
 #if 1
-<<<<<<< HEAD
-    
 
-
-void Go_Stop (void);
-struct sensors_dig;
-void Follow_Line_Stop(void);
-=======
 void Go_Stop ();
 void Go_to_White();
 struct sensors_ dig;
 void Follow_Line_Stop();
->>>>>>> 83422b286611c45f740e508ca2f8237346ba3b97
 void tankturn_right();
 void tankturn_left();
 uint8_t speed;
