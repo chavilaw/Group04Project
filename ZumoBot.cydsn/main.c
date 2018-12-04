@@ -55,7 +55,7 @@
 */
 
 
-#if 0
+#if 1
     // zumo wrestling task 1
 void Go_Stop (void);
 void Stay_in_Circle (void);
@@ -64,6 +64,7 @@ void tankturn_right();
 void tankturn_left();
 void random_reverse();
 void Go_to_White();
+struct accData_ data;
 uint8_t speed;
 uint32_t delay;
 uint8_t f_speed;
@@ -80,6 +81,7 @@ void zmain(void)
     // void IR_wait(void); //wait for any IR
     for(;;)
     {
+    	LSM303D_Start();
         // read digital values that are based on threshold. 0 = white, 1 = black
         reflectance_digital(&dig); 
         printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
@@ -95,23 +97,16 @@ void zmain(void)
    		    print_mqtt("Zumo006/start","%d",start_time);
             Go_to_White();
 			Stay_in_Circle ();
-			LSM303D_Read_Acc(&data);
-		
-            if(data.accX < -2000 || data.accX > -2000)
-            {
-                hit_time = xTaskGetTickCount( );
-                print_mqtt("Zumo006/hit"," %d", hit_time);
-                break;
-            }
-		
+			if (SW1_Read()== 0)// button press	
+			{
+				stop_time = xTaskGetTickCount( );
+   		    	print_mqtt("Zumo006/stop","%d",stop_time);
 
-   		    print_mqtt("Zumo006/hit","%d",hit_time);
+   		    	execution_time = stop_time - start_time;
+   		    	print_mqtt("Zumo006/time","%d",execution_time);
+			}
 
-   		    stop_time = xTaskGetTickCount( );
-   		    print_mqtt("Zumo006/stop","%d",stop_time);
-
-   		    execution_time = stop_time - start_time;
-   		    print_mqtt("Zumo006/time","%d",execution_time);
+   		    
 
         }
        else
@@ -144,23 +139,35 @@ void Go_Stop (void)
 }
 void Stay_in_Circle (void)//goes forward until meets the black line than stops, moves back and does a random reverse
 {
+    TickType_t hit_time;
 	motor_start();
 	motor_forward(0,0);
 
-	while(1)
+    while(1)
 	{
+       LSM303D_Read_Acc(&data);
 	   reflectance_digital(&dig);
        while ((dig.l3 == 0) && (dig.r3 == 0))
-       {
+       {   
            motor_forward(200,0);
            reflectance_digital(&dig);
+            if(data.accX < -4000 || data.accX > 4000)
+            {
+                hit_time = xTaskGetTickCount( );
+                print_mqtt("Zumo006/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
+            } 
+            
         }
        if ((dig.l1 == 1) && (dig.r1 == 1))
        {
             motor_forward(0,0);
             reflectance_digital(&dig);
             random_reverse();
-
+            if(data.accX < -4000 || data.accX > 4000)
+            {
+                hit_time = xTaskGetTickCount( );
+                print_mqtt("Zumo006/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
+            }   
         }
     	
 	}
@@ -173,11 +180,11 @@ void random_reverse()
   int n = rand() %2;
   if (n == 0)
   {
-  	tankturn_left(100,25,250);//turn first 
+  	tankturn_left(100,25,450);//turn first 
   }
   else 
   {
-  	tankturn_right(25,100,250);
+  	tankturn_right(25,100,450);
   }
 }
 void tankturn_right(f_speed, b_speed, delay)
@@ -216,7 +223,7 @@ reflectance_digital(&dig);
 }
 #endif
 
-#if 1
+#if 0
 //Task 2 linefollower
 
 void Go_Stop ();
