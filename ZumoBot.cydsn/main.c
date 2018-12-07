@@ -54,7 +54,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
-#if 0
+#if 1
     // zumo wrestling task 1
 void Go_Stop (void);
 void Stay_in_Circle (void);
@@ -96,15 +96,12 @@ void zmain(void)
    		    print_mqtt("Zumo045/start","%d",start_time);
             Go_to_White();
 			Stay_in_Circle ();
-			if (SW1_Read()== 0)// button press	
-			{
-                motor_forward(0,0);
-				stop_time = xTaskGetTickCount( );
-   		    	print_mqtt("Zumo045/stop","%d",stop_time);
-
-   		    	execution_time = stop_time - start_time;
-   		    	print_mqtt("Zumo045/time","%d",execution_time);
-			}
+			motor_forward(0,0);
+		    stop_time = xTaskGetTickCount( );
+   		    print_mqtt("Zumo045/stop","%d",stop_time);
+        	execution_time = stop_time - start_time;
+   		    print_mqtt("Zumo045/time","%d",execution_time);
+			
 
    		    
 
@@ -142,52 +139,66 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
     TickType_t hit_time;
 	motor_start();
 	motor_forward(0,0);
+    int n = rand() %2;
 
     while(1)
 	{
        LSM303D_Read_Acc(&data);
 	   reflectance_digital(&dig);
-       if ((dig.l1 == 1) || (dig.r1 == 1))
+  
+    if ((dig.l1 == 1) || (dig.r1 == 1))
        {
             motor_forward(0,0);
-            reflectance_digital(&dig);
-            random_reverse();
-            if(data.accX < -5000 || data.accX > 5000)
+            //reflectance_digital(&dig);
+            //vTaskDelay(10);
+            motor_backward(100,1500); // moving backward
+  
+            if (SW1_Read()== 0)
+            {
+            motor_forward(0,0);
+            break;
+            }
+            else if (n == 0)
+            {
+        	tankturn_left(100,25,450);//turn first 
+            }
+            else if (n==1)
+            {
+        	tankturn_right(25,100,450);
+            }
+            else if((data.accX > 6000))
             {
                 hit_time = xTaskGetTickCount( );
-                print_mqtt("Zumo045/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
-            }   
+                vTaskDelay(100);
+                print_mqtt("Zumo045/hit"," %d %d", hit_time, data.accX);
+            }  
+             
         }     
-        else if ((dig.l3 == 0) && (dig.r3 == 0))
+    else if ((dig.l1 == 0) && (dig.r1 == 0))
        {   
-           motor_forward(200,0);
-           reflectance_digital(&dig);
-            if(data.accX < -5000 || data.accX > 5000)
+            motor_forward(200,0);
+            
+           //LSM303D_Read_Acc(&data);
+            if (SW1_Read()== 0)
+            {
+                motor_forward(0,0);
+            break;
+            } 
+            else if((data.accX < -6000))
             {
                 hit_time = xTaskGetTickCount( );
-                print_mqtt("Zumo045/hit"," Time:%d Hit strenght:%d", hit_time, data.accX);
+                vTaskDelay(100);
+                print_mqtt("Zumo045/hit"," %d %d", hit_time, data.accX);
             } 
             
         }
+        
 
     	
 	}
 	
 }
-void random_reverse()
-{    
-  
-  motor_backward(100,1500); // moving backward
-  int n = rand() %2;
-  if (n == 0)
-  {
-  	tankturn_left(100,25,450);//turn first 
-  }
-  else 
-  {
-  	tankturn_right(25,100,450);
-  }
-}
+
 void tankturn_right(f_speed, b_speed, delay)
 {
 	MotorDirLeft_Write(0);      // set LeftMotor forward mode
@@ -224,7 +235,7 @@ reflectance_digital(&dig);
 }
 #endif
 
-#if 1
+#if 0
 //Task 2 linefollower
 
 void Go_Stop ();
@@ -264,6 +275,8 @@ for(;;)
         print_mqtt("Zumo045/start", "%d", start); // Send MQTT time
         Go_to_White(); // go away from the first black line  to start  the line following
    		Follow_Line_Stop(); // go and follow the line and  stop  on the second black line
+        Go_to_White();
+        Follow_Line_Stop();
         end = xTaskGetTickCount(); //stop time
         print_mqtt("Zumo045/stop", "%d", end); // MQTT end time
         print_mqtt("Zumo045/time", "%d", end-start); // MQTT endd - start time
@@ -319,15 +332,15 @@ reflectance_digital(&dig);
 
 void Follow_Line_Stop(void)
 {
-    int enable=0;
-
+    
     while (1)
     {
         reflectance_digital(&dig);
         if ((dig.l3 == 1) && (dig.r3 == 1)) 
         {
             
-            Go_Stop2();
+           motor_forward(0,0);
+            break;
             
             
         }
@@ -412,7 +425,7 @@ uint8_t f_speed;
 uint8_t b_speed;
 int d = 0; // Print the detected distance (centimeters)
 void Maze_Runner();
-void Avoid_obstacle();
+void Avoid_obstacle(void);
 void Go_to_White();
 void Go_Stop();
 
@@ -422,13 +435,13 @@ void Go_Stop();
 void zmain(void)
 {
     
-    TickType_t start_time, stop_time, execution_time, hit_time;
+    TickType_t start_time, stop_time, execution_time;
     
     Ultra_Start();
     reflectance_start();
 
     reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); 
-    print_mqtt("Zumo045/ready","maze");
+    
     
     motor_start();              // enable motor controller
     motor_forward(0,0);     // moving forward
@@ -440,7 +453,7 @@ void zmain(void)
     for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
-        //reflectance_digital(&dig);
+        reflectance_digital(&dig);
         //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
         //vTaskDelay(0);
     
@@ -449,14 +462,16 @@ void zmain(void)
         {
           
            Go_Stop();
-           print_mqtt("Zumo045/ready","%d");
+           print_mqtt("Zumo045/ready","maze");
            IR_Start(); // start IR receiving 
            IR_flush(); // clear IR receive buffer
            IR_wait();
            start_time = xTaskGetTickCount( );
    		   print_mqtt("Zumo045/start","%d",start_time);
-   		   Maze_Runner();
-           
+           Follow_line();
+           Maze_Runner();
+           print_mqtt("Zumo045/stop","%d", stop_time);
+           print_mqtt("Zumo045/time","%d", stop_time-start_time);
 
         }
         else
@@ -494,62 +509,144 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 
 void Maze_Runner(void)
 {
-	int obstacle=1;
 	int d;
+    int i=0;
+    int y=0;
 	
     while(1)
     {
     reflectance_digital(&dig);
     d = Ultra_GetDistance();
     
-    if (((dig.l1 == 1) && (dig.r1 == 1)) && (obstacle == 1))
-    {
-	    Go_to_White();
-        Follow_line();
-    }
-    else if ((dig.l3 == 1) && (dig.r3 == 1))
+    
+    if ((dig.l3 == 1) && (dig.r3 == 1) && (d <= 15))
 	{
-	motor_forward(0,0);
-	    if(d < 13)
-	    {
-            obstacle = 0;
-	    }
-        else 
-            obstacle = 1;
+	    motor_forward(0,0);
+        if (i<2)
+        {
+        tankturn_right(100,100,250);
+        Follow_line();
+        i ++;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        Follow_line();
+        i ++;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        tankturn_left(100,100,250);
+        Follow_line();
+        y ++;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        motor_forward(0,0);
+        }
+        else if (i >= 2)
+        {
+        tankturn_left(100,100,250);
+        
+        Follow_line();
+        i --;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        Follow_line();
+        i --;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        tankturn_right(100,100,250);
+        Follow_line();
+        y ++;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        motor_forward(0,0);
+        }
         
     }
-    else if (obstacle == 0)
+    else if (((dig.l3 == 1) && (dig.r3 == 1)) && (d > 15))
     {
-	    Avoid_obstacle();
+	   
+        Follow_line();
+        y ++;
+        print_mqtt("Zumo045/position","%d %d", i, y);
+        
+            if (((y == 11)||(y == 12)) && (i==0))
+            {
+            motor_forward(100,2000);
+            motor_forward(0,0);
+            break;
+            }
+            else if ((y == 11) && (i==1))
+            {
+            tankturn_left(100,100,250);
+            Follow_line();
+            i --;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            tankturn_right(100,100,250);
+            }
+            else if ((y == 11) && (i==2))
+            {
+            tankturn_left(100,100,250);
+            Follow_line();
+            i--;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            Follow_line();
+            i --;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            tankturn_right(100,100,250);
+            }
+            else if ((y == 11) && (i==3))
+            {
+            tankturn_left(100,100,250);
+            Follow_line();
+            i --;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            Follow_line();
+            i --;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            Follow_line();
+            i --;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            tankturn_right(100,100,250);
+            }
+            else if ((y == 11) && (i==-1))
+            {
+            tankturn_right(100,100,250);
+            Follow_line();
+            i ++;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            tankturn_left(100,100,250);
+            }
+            else if ((y == 11) && (i==-2))
+            {
+            tankturn_right(100,100,250);
+            Follow_line();
+            i ++;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            Follow_line();
+            i ++;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            tankturn_left(100,100,250);
+            }
+             else if ((y == 11) && (i==-3))
+            {
+            tankturn_right(100,100,250);
+            Follow_line();
+            i ++;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            Follow_line();
+            i ++;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            Follow_line();
+            i ++;
+            print_mqtt("Zumo045/position","%d %d", i, y);
+            tankturn_left(100,100,250);
+            }
+        
     }
+    /*else if (y>=13)
+    {
+    motor_forward(0,0);
+    break;
+    }   */     
+   
     
-    }
+}
 }
 
-void Avoid_obstacle(void)
-{
-	// tankturn right
-	tankturn_right(75,75,250);
-	// 2 x follow line and stop after the black line
-	//Follow_line();
-	//Go_to_White();
-	//Follow_line();
-	// tankturn left
-	//tankturn_left(150,150,250);
-	// 3 x follow line and stop after the black line
-	//Follow_line();
-	//Go_to_White();
-	//Follow_line();
-	//Go_to_White();
-	//Follow_line();
-	// tankturn left
-	//tankturn_left(150,150,250);
-	// 2 x follow line and stop after the black line
-	//Follow_line();
-	//Go_to_White();
-	//Follow_line();
 
-}
  
  void Go_to_White(void)
 {
@@ -567,43 +664,9 @@ reflectance_digital(&dig);
 }
 }
 
-void ultrasonic(void)
-{
-    TickType_t start_time, stop_time, execution_time, hit_time;
-    do{
-        Follow_line();
-    }
-    while(1);
-    {
-        d = Ultra_GetDistance(); // Print the detected distance (centimeters)
-        if(d <= 13) // if the distance is less than 13 cm
-       {
-            motor_forward(0,0);         // stop motor
-            stop_time = xTaskGetTickCount( );
-   	        print_mqtt("Zumo045/stop","%d",stop_time);
-            //vTaskDelay(500);
-
-            int n = rand() %2;
-            if (n == 0)
-            {
-  	           tankturn_left(100,25,250);
-            }
-            else 
-  	        {
-  	           tankturn_right(25,100,250);
-            }
-            //vTaskDelay(100);
-            
-       }
-        
-    }
-    
-}
-
-
 void Follow_line(void)
 {
-	    
+	Go_to_White();  
     while (1)
 	{
 		reflectance_digital(&dig);
@@ -630,7 +693,11 @@ void Follow_line(void)
 		{
 		    tankturn_left(75,75,0);
 		}
-        
+        else if ((dig.l1 == 0) && (dig.r1 == 0))
+        {
+            motor_backward(100,0);
+            
+        }
         
         
         vTaskDelay(0);
