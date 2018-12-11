@@ -557,7 +557,6 @@ void Maze_Runner(void)
 	   
         Follow_line();
         y ++;
-       // vTaskDelay(500);
         print_mqtt("Zumo045/position","%d %d", x, y);
         
             if (((y == 11)&& (x==0)))
@@ -565,11 +564,12 @@ void Maze_Runner(void)
             Follow_line(); 
             y ++;
             print_mqtt("Zumo045/position","%d %d", x, y);
+            
             motor_forward(0,0);
-            break;
+            
             }
-            else if ((y>=12)&&(x==0))
-            {
+            else if ((y>12)&&(x==0))
+            {   
             motor_forward(75,500);
             motor_forward(0,0);
             break;
@@ -701,17 +701,17 @@ void Follow_line(void)
 		
         else if ((dig.l1 == 1) && (dig.r1 == 1))
     	{
-    		motor_forward(100,0);
+    		motor_forward(150,0);
     	}
 		
         else if ((dig.l1 == 0) && (dig.r1 == 1))
 		{
-		    tankturn_right(75,75,0);
+		    tankturn_right(100,100,0);
 		}
 		
         else if ((dig.l1 == 1) && (dig.r1 == 0))
 		{
-		    tankturn_left(75,75,0);
+		    tankturn_left(100,100,0);
 		}
         else if ((dig.l1 == 0) && (dig.r1 == 0))
         {
