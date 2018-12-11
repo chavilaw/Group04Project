@@ -54,7 +54,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
-#if 1
+#if 0
     // zumo wrestling task 1
 void Go_Stop (void);
 void Stay_in_Circle (void);
@@ -409,13 +409,10 @@ void Go_Stop2 (void)
 
 #endif 
 
-#if 0
+#if 1
     
 //this is the maze one//
-void Go_forward (void);
 void Follow_line(void);
-void ultrasonic(void);
-void Start_moving(void);
 struct sensors_ dig;
 void tankturn_right();
 void tankturn_left();
@@ -425,7 +422,6 @@ uint8_t f_speed;
 uint8_t b_speed;
 int d = 0; // Print the detected distance (centimeters)
 void Maze_Runner();
-void Avoid_obstacle(void);
 void Go_to_White();
 void Go_Stop();
 
@@ -435,7 +431,7 @@ void Go_Stop();
 void zmain(void)
 {
     
-    TickType_t start_time, stop_time, execution_time;
+    TickType_t start_time, stop_time;
     
     Ultra_Start();
     reflectance_start();
@@ -468,8 +464,8 @@ void zmain(void)
            IR_wait();
            start_time = xTaskGetTickCount( );
    		   print_mqtt("Zumo045/start","%d",start_time);
-           Follow_line();
            Maze_Runner();
+           stop_time = xTaskGetTickCount( );
            print_mqtt("Zumo045/stop","%d", stop_time);
            print_mqtt("Zumo045/time","%d", stop_time-start_time);
 
@@ -510,8 +506,8 @@ if ((dig.l3 == 1) && (dig.r3 == 1))
 void Maze_Runner(void)
 {
 	int d;
-    int i=0;
-    int y=0;
+    int x=0;
+    int y=-1;
 	
     while(1)
     {
@@ -522,36 +518,37 @@ void Maze_Runner(void)
     if ((dig.l3 == 1) && (dig.r3 == 1) && (d <= 15))
 	{
 	    motor_forward(0,0);
-        if (i<2)
+        if (x<2)
         {
-        tankturn_right(100,100,250);
+        tankturn_right(125,125,250);
         Follow_line();
-        i ++;
-        print_mqtt("Zumo045/position","%d %d", i, y);
+        x ++;
+        print_mqtt("Zumo045/position","%d %d", x, y);
         Follow_line();
-        i ++;
-        print_mqtt("Zumo045/position","%d %d", i, y);
-        tankturn_left(100,100,250);
+        x ++;
+        print_mqtt("Zumo045/position","%d %d", x, y);
+        tankturn_left(125,125,250);
         Follow_line();
-        y ++;
-        print_mqtt("Zumo045/position","%d %d", i, y);
         motor_forward(0,0);
+          y ++;
+        print_mqtt("Zumo045/position","%d %d", x, y);
         }
-        else if (i >= 2)
+        else if (x >= 2)
         {
-        tankturn_left(100,100,250);
+        tankturn_left(125,125,250);
         
         Follow_line();
-        i --;
-        print_mqtt("Zumo045/position","%d %d", i, y);
+        x --;
+        print_mqtt("Zumo045/position","%d %d", x, y);
         Follow_line();
-        i --;
-        print_mqtt("Zumo045/position","%d %d", i, y);
-        tankturn_right(100,100,250);
+        x --;
+        print_mqtt("Zumo045/position","%d %d", x, y);
+        tankturn_right(125,125,250);
         Follow_line();
-        y ++;
-        print_mqtt("Zumo045/position","%d %d", i, y);
         motor_forward(0,0);
+        y ++;
+        print_mqtt("Zumo045/position","%d %d", x, y);
+        
         }
         
     }
@@ -560,87 +557,110 @@ void Maze_Runner(void)
 	   
         Follow_line();
         y ++;
-        print_mqtt("Zumo045/position","%d %d", i, y);
+       // vTaskDelay(500);
+        print_mqtt("Zumo045/position","%d %d", x, y);
         
-            if (((y == 11)||(y == 12)) && (i==0))
+            if (((y == 11)&& (x==0)))
             {
-            motor_forward(100,2000);
+            Follow_line(); 
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             motor_forward(0,0);
             break;
             }
-            else if ((y == 11) && (i==1))
+            else if ((y>=12)&&(x==0))
             {
-            tankturn_left(100,100,250);
+            motor_forward(75,500);
+            motor_forward(0,0);
+            break;
+            }   
+            else if ((y == 11) && (x==1))
+            {
+            tankturn_left(125,125,250);
             Follow_line();
-            i --;
-            print_mqtt("Zumo045/position","%d %d", i, y);
-            tankturn_right(100,100,250);
+            x --;
+            print_mqtt("Zumo045/position","%d %d", x, y);
+            tankturn_right(125,125,250);
+            Follow_line();
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             }
-            else if ((y == 11) && (i==2))
+            else if ((y == 11) && (x==2))
             {
-            tankturn_left(100,100,250);
+            tankturn_left(125,125,250);
             Follow_line();
-            i--;
-            print_mqtt("Zumo045/position","%d %d", i, y);
+            x--;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             Follow_line();
-            i --;
-            print_mqtt("Zumo045/position","%d %d", i, y);
-            tankturn_right(100,100,250);
+            x --;
+            print_mqtt("Zumo045/position","%d %d", x, y);
+            tankturn_right(125,125,250);
+            Follow_line();
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             }
-            else if ((y == 11) && (i==3))
+            else if ((y == 11) && (x==3))
             {
-            tankturn_left(100,100,250);
+            tankturn_left(125,125,250);
             Follow_line();
-            i --;
-            print_mqtt("Zumo045/position","%d %d", i, y);
+            x --;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             Follow_line();
-            i --;
-            print_mqtt("Zumo045/position","%d %d", i, y);
+            x --;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             Follow_line();
-            i --;
-            print_mqtt("Zumo045/position","%d %d", i, y);
-            tankturn_right(100,100,250);
+            x --;
+            print_mqtt("Zumo045/position","%d %d", x, y);
+            tankturn_right(125,125,250);
+            Follow_line();
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             }
-            else if ((y == 11) && (i==-1))
+            else if ((y == 11) && (x==-1))
             {
-            tankturn_right(100,100,250);
+            tankturn_right(125,125,250);
             Follow_line();
-            i ++;
-            print_mqtt("Zumo045/position","%d %d", i, y);
-            tankturn_left(100,100,250);
+            x ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
+            tankturn_left(125,125,250);
+            Follow_line();
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             }
-            else if ((y == 11) && (i==-2))
+            else if ((y == 11) && (x==-2))
             {
-            tankturn_right(100,100,250);
+            tankturn_right(125,125,250);
             Follow_line();
-            i ++;
-            print_mqtt("Zumo045/position","%d %d", i, y);
+            x ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             Follow_line();
-            i ++;
-            print_mqtt("Zumo045/position","%d %d", i, y);
-            tankturn_left(100,100,250);
+            x ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
+            tankturn_left(125,125,250);
+            Follow_line();
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             }
-             else if ((y == 11) && (i==-3))
+             else if ((y == 11) && (x==-3))
             {
-            tankturn_right(100,100,250);
+            tankturn_right(125,125,250);
             Follow_line();
-            i ++;
-            print_mqtt("Zumo045/position","%d %d", i, y);
+            x ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             Follow_line();
-            i ++;
-            print_mqtt("Zumo045/position","%d %d", i, y);
+            x ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             Follow_line();
-            i ++;
-            print_mqtt("Zumo045/position","%d %d", i, y);
-            tankturn_left(100,100,250);
+            x ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
+            tankturn_left(125,125,250);
+            Follow_line();
+            y ++;
+            print_mqtt("Zumo045/position","%d %d", x, y);
             }
         
     }
-    /*else if (y>=13)
-    {
-    motor_forward(0,0);
-    break;
-    }   */     
+       
    
     
 }
@@ -681,7 +701,7 @@ void Follow_line(void)
 		
         else if ((dig.l1 == 1) && (dig.r1 == 1))
     	{
-    		motor_forward(75,0);
+    		motor_forward(100,0);
     	}
 		
         else if ((dig.l1 == 0) && (dig.r1 == 1))
