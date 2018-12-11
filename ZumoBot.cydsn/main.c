@@ -54,7 +54,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
-#if 0
+#if 1
     // zumo wrestling task 1
 void Go_Stop (void);
 void Stay_in_Circle (void);
@@ -151,7 +151,7 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
             motor_forward(0,0);
             //reflectance_digital(&dig);
             //vTaskDelay(10);
-            motor_backward(100,1500); // moving backward
+            motor_backward(200,200); // moving backward
   
             if (SW1_Read()== 0)
             {
@@ -160,11 +160,11 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
             }
             else if (n == 0)
             {
-        	tankturn_left(100,25,450);//turn first 
+        	tankturn_left(100,100,450);//turn first 
             }
             else if (n==1)
             {
-        	tankturn_right(25,100,450);
+        	tankturn_right(100,100,450);
             }
             else if((data.accX > 6000))
             {
@@ -176,7 +176,7 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
         }     
     else if ((dig.l1 == 0) && (dig.r1 == 0))
        {   
-            motor_forward(200,0);
+            motor_forward(225,0);
             
            //LSM303D_Read_Acc(&data);
             if (SW1_Read()== 0)
@@ -346,15 +346,15 @@ void Follow_Line_Stop(void)
         }
         else if ((dig.l1 == 1) && (dig.r1 == 1))
         {
-            motor_forward(75,0);
+            motor_forward(200,0);
         }
         else if ((dig.l1 == 0) && (dig.r1 == 1))
         {
-        tankturn_right(75,75,0);
+        tankturn_right(150,150,0);
         }
         else if ((dig.l1 == 1) && (dig.r1 == 0))
         {
-        tankturn_left(75,75,0);
+        tankturn_left(150,150,0);
         }
         
         
@@ -379,37 +379,11 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare2(b_speed); 
     vTaskDelay(delay);
 }
-void Go_Stop2 (void)
-{
-    uint8_t i=0;
-    uint8_t enable=0;
-    //motor_start();
-    //motor_forward(0,0);
-    while(i<2)
-    {
-        //print_mqtt("Zumo006/debug", "Start");
-        
-        reflectance_digital(&dig);
-        if (((dig.l3 == 1) && (dig.r3 == 1))&& enable==1)
-        {
-         i++;
-            enable=0;
-           
-        }
-        else if(!((dig.l3 == 1) && (dig.r3 == 1))&& enable ==0)
-        {    
-        enable=1;
-        }
-        else
-        motor_forward(75,1);
-    }   
-    motor_forward(0,0);
-}
 
 
 #endif 
 
-#if 1
+#if 0
     
 //this is the maze one//
 void Follow_line(void);
