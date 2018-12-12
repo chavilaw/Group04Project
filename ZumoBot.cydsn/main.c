@@ -54,7 +54,7 @@
  * @details  ** Enable global interrupt since Zumo library uses interrupts. **<br>&nbsp;&nbsp;&nbsp;CyGlobalIntEnable;<br>
 */
 
-#if 1
+#if 0
     // zumo wrestling task 1
 void Go_Stop (void);
 void Stay_in_Circle (void);
@@ -77,7 +77,6 @@ void zmain(void)
     reflectance_start();
     reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
 
-    // void IR_wait(void); //wait for any IR
     for(;;)
     {
     	LSM303D_Start();
@@ -88,7 +87,7 @@ void zmain(void)
        if (SW1_Read()== 0)// button press
         {
             Go_Stop();
-            print_mqtt("Zumo045/zumo","ready");
+            print_mqtt("Zumo045/ready","zumo");
             IR_Start(); // start IR receiving
             IR_flush(); // clear IR receive buffer
    		    IR_wait();
@@ -112,7 +111,7 @@ void zmain(void)
     }
 }
 
-void Go_Stop (void)
+void Go_Stop (void)//goes forward and stops at the black line
 {
    
 	motor_start();
@@ -149,8 +148,6 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
     if ((dig.l1 == 1) || (dig.r1 == 1))
        {
             motor_forward(0,0);
-            //reflectance_digital(&dig);
-            //vTaskDelay(10);
             motor_backward(200,200); // moving backward
   
             if (SW1_Read()== 0)
@@ -170,7 +167,7 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
             {
                 hit_time = xTaskGetTickCount( );
                 vTaskDelay(100);
-                print_mqtt("Zumo045/hit"," %d %d", hit_time, data.accX);
+                print_mqtt("Zumo045/hit"," %d", hit_time);
             }  
              
         }     
@@ -178,7 +175,6 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
        {   
             motor_forward(225,0);
             
-           //LSM303D_Read_Acc(&data);
             if (SW1_Read()== 0)
             {
                 motor_forward(0,0);
@@ -188,7 +184,7 @@ void Stay_in_Circle (void)//goes forward until meets the black line than stops, 
             {
                 hit_time = xTaskGetTickCount( );
                 vTaskDelay(100);
-                print_mqtt("Zumo045/hit"," %d %d", hit_time, data.accX);
+                print_mqtt("Zumo045/hit"," %d", hit_time);
             } 
             
         }
@@ -216,7 +212,7 @@ void tankturn_left(f_speed, b_speed, delay)
     vTaskDelay(delay);
 }
 
-void Go_to_White(void)
+void Go_to_White(void)//goes off from the black line and stops on white
 {
 while(1)
 {
@@ -253,7 +249,7 @@ uint8_t b_speed;
 
 void zmain(void)
 {
-reflectance_start(); // turn on reflectors on Zumbo 
+reflectance_start(); // turn on reflectors on Zumo 
 reflectance_set_threshold(9000, 9000, 11000, 11000, 9000, 9000); // set center sensor threshold to 11000 and others to 9000
 TickType_t start; // variables for measuring time
 TickType_t end;
@@ -383,7 +379,7 @@ void tankturn_left(f_speed, b_speed, delay)
 
 #endif 
 
-#if 0
+#if 1
     
 //this is the maze one//
 void Follow_line(void);
@@ -415,22 +411,15 @@ void zmain(void)
     
     motor_start();              // enable motor controller
     motor_forward(0,0);     // moving forward
-    
-    //vTaskDelay(500);
-
-
+  
 
     for(;;)
     {
         // read digital values that are based on threshold. 0 = white, 1 = black
         reflectance_digital(&dig);
-        //printf("DIG l3:%d. l2:%d. l1:%d. r1:%d. r2:%d. r3:%d.\n", dig.l3, dig.l2, dig.l1, dig.r1, dig.r2, dig.r3);         
-        //vTaskDelay(0);
-    
-    
+       
         if (SW1_Read()== 0)// button press
         {
-          
            Go_Stop();
            print_mqtt("Zumo045/ready","maze");
            IR_Start(); // start IR receiving 
@@ -481,7 +470,7 @@ void Maze_Runner(void)
 {
 	int d;
     int x=0;
-    int y=-1;
+    int y=-1;//waits at -1 and when IR signal received moves to (0,0) and starts the maze
 	
     while(1)
     {
@@ -642,7 +631,7 @@ void Maze_Runner(void)
 
 
  
- void Go_to_White(void)
+ void Go_to_White(void)// moves off from the black line and waits on the white
 {
 while(1)
 {
@@ -717,12 +706,6 @@ void tankturn_left(f_speed, b_speed, delay)
     PWM_WriteCompare2(b_speed);
     vTaskDelay(delay);
 }
-
-
-
-
-
-
 
 
 
